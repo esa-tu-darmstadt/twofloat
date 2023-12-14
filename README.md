@@ -54,7 +54,7 @@ two<float> e = doubleword::mul<doubleword::Mode::Fast, false>(a, b);
 We do not provide operator overloads because different algorithms are implemented for some operations, and we do not want to choose a default algorithm for the user.
 
 ## Precision 
-Generally speaking, the precision of the double-word arithmetics is twice the precision of the underlying floating-point type. However, the range stays the same. The following table shows the precision of the different arithmetics: 
+Generally speaking, the precision of the double-word arithmetic is twice the precision of the underlying floating-point type. However, the range stays the same. The following table shows the precision of the different arithmetics: 
 | Type | Base | Precision Bits | Roundoff Error Unit | Decimal digits | Range |
 | ---- | --------- | -------------- | ------------------- | -------------- | ----- | 
 | `float` | β=2 | p=23+1 | u<sub>float</sub> = β<sup>1-p</sup> = 5.96e-8 | log<sub>10</sub>(2<sup>p-1</sup>) = 6.9 | 1.2e-38 to 3.4e38 |
