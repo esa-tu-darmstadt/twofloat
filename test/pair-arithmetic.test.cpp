@@ -73,7 +73,7 @@ TEST(PairArithmetic, MulTest) {
   two<float> y = {(float)dy, 0.0f};
 
   // Calculate the result using pair arithmetic
-  two<float> result = pair::mul(x, y);
+  two<float> result = pair::mul<false>(x, y);
 
   // Expect the double-word result to be close to the double result,
   // considering the precision of the double-word arithmetic.

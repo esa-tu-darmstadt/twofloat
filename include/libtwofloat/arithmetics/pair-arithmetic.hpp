@@ -72,9 +72,9 @@ inline two<T> sub(T x, const two<T> &y) {
 
 /// \brief Multiplies two pairwise floating point numbers using the pairwise
 /// arithmetic. This is algorithm `CPairProd` in chapter 3 of the paper.
-template <typename T>
+template <bool useFMA, typename T>
 inline two<T> mul(const two<T> &x, const two<T> &y) {
-  two<T> c = algorithms::TwoProd(x.h, y.h);
+  two<T> c = algorithms::TwoProd<T, useFMA>(x.h, y.h);
   T tl1 = x.h * y.l;
   T tl2 = x.l * y.h;
   T cl2 = tl1 + tl2;
@@ -85,9 +85,9 @@ inline two<T> mul(const two<T> &x, const two<T> &y) {
 /// \brief Multiplies a pairwise floating point number with a normal floating
 /// point number using the pairwise arithmetic. This is derived from algorithm
 /// `CPairProd` in chapter 3 of the paper.
-template <typename T>
+template <bool useFMA, typename T>
 inline two<T> mul(const two<T> &x, T y) {
-  two<T> c = algorithms::TwoProd(x.h, y);
+  two<T> c = algorithms::TwoProd<useFMA>(x.h, y);
   T tl2 = x.l * y;
   T cl3 = c.l + tl2;
   return {c.h, cl3};
