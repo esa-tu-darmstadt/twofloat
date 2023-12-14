@@ -99,13 +99,9 @@ inline two<T> mul(T x, const two<T> &y) {
 
 /// \brief Divides two pairwise floating point numbers using the pairwise
 /// arithmetic. This is algorithm `CPairDiv` in chapter 3 of the paper.
-/// This is only an approximation, more accurate results can be obtained by
-/// using an FMA instruction.
 template <typename T>
 inline two<T> div(const two<T> &x, const two<T> &y) {
   T c = x.h / y.h;
-  // This is only an approximation, more accurate results can be obtained by
-  // using an FMA instruction.
   T t = x.h - c * y.h;
   T p = t + x.l;
   T q = c * y.l;
