@@ -71,8 +71,8 @@ std::numeric_limits<two<float>>::digits10; // digits10 (two<float>) = 14
 std::numeric_limits<two<double>>::digits10; // digits10 (two<double>) = 31
 ```
 
-
-## Performance and error bounds of the double-word arithmetics
+## Runtime and error bounds
+### Double-word arithmetic (Joldes et al. 2017)
 The double-word arithmetic by Joldes et al. provides error bounds for each operation. The error bounds are given in units u of the roundoff error of the underlying floating-point type (see table above). For example, when using `two<float>`, u is equal to u<sub>float</sub>. 
 
 The number of floating-point operations (FP ops) required for each operation is different to Table 1 in Joldes et al. 2017 for several reasons:
@@ -97,6 +97,18 @@ The number of floating-point operations (FP ops) required for each operation is 
 | DW **:** DW | Yes | Accurate | 9.8u<sup>2</sup> | 34 | Algorithm 18 (DWDivDW3) |
 
 DW: Double-word (`two<T>`), FP: Floating-point (`T`)
+
+### Pair arithmetic (Lange and Rump 2020)
+
+| Operation | FMA | # of FP ops | Name in Lange and Rump 2020 |
+| --------- | --- | ----------- | -------------------------- |
+| DW **+** FP | No | 7 | derived from CPairSum |
+| DW **+** DW | No | 8 | CPairSum |
+| DW **x** FP | No | 23 | derived from CPairMul |
+| DW **x** FP | Yes | 5 | derived from CPairMul |
+| DW **x** DW | No | 25 | CPairMul |
+| DW **x** DW | Yes | 7 | CPairMul |
+| DW **:** DW | No | 8 | CPairDiv |
 
 ## Documentation
 The documentation can be build using Doxygen. We are working on providing a hosted version of the documentation.
