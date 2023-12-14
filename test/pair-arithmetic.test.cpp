@@ -60,7 +60,7 @@ TEST(PairArithmetic, SubTest) {
   EXPECT_EQ(dresult, result.eval<double>());
 }
 
-TEST(PairArithmetic, MulTest) {
+TEST(PairArithmetic, MulNoFMATest) {
   // These are two numbers that set the last bit of the mantissa to 1.
   // During a normal float multiplication, this information is lost.
   double dx = 1.0 + std::numeric_limits<float>::epsilon();
@@ -74,6 +74,27 @@ TEST(PairArithmetic, MulTest) {
 
   // Calculate the result using pair arithmetic
   two<float> result = pair::mul<false>(x, y);
+
+  // Expect the double-word result to be close to the double result,
+  // considering the precision of the double-word arithmetic.
+  EXPECT_NEAR(dresult, result.eval<double>(),
+              dresult * std::numeric_limits<two<float>>::epsilon());
+}
+
+TEST(PairArithmetic, MulFMATest) {
+  // These are two numbers that set the last bit of the mantissa to 1.
+  // During a normal float multiplication, this information is lost.
+  double dx = 1.0 + std::numeric_limits<float>::epsilon();
+  double dy = 1.0 + std::numeric_limits<float>::epsilon();
+
+  // Calculate the result using double precision
+  double dresult = dx * dy;
+
+  two<float> x = {(float)dx, 0.0f};
+  two<float> y = {(float)dy, 0.0f};
+
+  // Calculate the result using pair arithmetic
+  two<float> result = pair::mul<true>(x, y);
 
   // Expect the double-word result to be close to the double result,
   // considering the precision of the double-word arithmetic.
