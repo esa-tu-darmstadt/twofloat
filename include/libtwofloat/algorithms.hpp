@@ -81,7 +81,7 @@ inline two<T> TwoDiff(T a, T b) {
 /// floating point number (Veltkamp 1968). Taken from Boldo 2006.
 template <typename T>
 inline two<T> Split(T x) {
-  if (abs(x) > constants<T>::SplitScaleThreshold) {
+  if (abs(x) > constants<T>::SplitScaleThreshold) [[unlikely]] {
     // Scale down the number to avoid overflows
     x *= constants<T>::SplitScaleDownFactor;
 
