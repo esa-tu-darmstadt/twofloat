@@ -448,6 +448,40 @@ static two<T> sin_taylor(const two<T> &input) {
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
+template<typename T>
+static two<T> cos_taylor(const two<T> &input) {
+
+  T pointfive, local_eps, onepointzero;
+  T* local_ptr_inv_fact;
+  if constexpr (std::is_same_v<T, float>) {
+    pointfive = 0.5f;
+    local_eps = fp32_eps;
+    onepointzero = 1.0f
+    local_ptr_inv_fact = &fp32_inv_fact[0][0];
+  } else if constexpr (std::is_same_v<T, double>) {
+    pointfive = 0.5;
+    local_eps = fp64_eps;
+    onepointzero = 1.0;
+    local_ptr_inv_fact = &fp64_inv_fact[0][0];
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  const T thresh = pointfive * local_eps;
+
+  two<T> r, s, t, x;
+
+  // TODO: make sure this is already supported in twofloat
+  if (input.is_zero()) {
+    return onepointzero;
+  }
+
+  x = -sqr(input);
+  r = x;
+  s = 1.0 + mul_pwr2(r, pointfive);
+  int i = 1;
+}
+
 // Reference: QD / dd_real.cpp
 template <typename T>
 inline two<T> sin(const two<T> &input) {
