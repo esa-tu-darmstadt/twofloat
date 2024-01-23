@@ -253,6 +253,45 @@ static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
 const double fp64_eps = 4.93038065763132e-32;  // 2^-104
 const double fp64_qd_split_thresh = 6.69692879491417e+299 // = 2^996
 
+// Reference: QD / dd_real.cpp
+static const int n_inv_fact = 15;
+
+static const float fp32_inv_fact[n_inv_fact][2] = {
+  { 1.6666666e-01,  9.2518585e-18},
+  { 4.1666666e-02,  2.3129646e-18},
+  { 8.3333333e-03,  1.1564823e-19},
+  { 1.3888888e-03, -5.3005439e-20},
+  { 1.9841269e-04,  1.7209558e-22},
+  { 2.4801587e-05,  2.1511947e-23},
+  { 2.7557319e-06, -1.8583932e-22},
+  { 2.7557319e-07,  2.3767714e-23},
+  { 2.5052108e-08, -1.4488140e-24},
+  { 2.0876756e-09, -1.2073450e-25},
+  { 1.6059043e-10,  1.2585294e-26},
+  { 1.1470745e-11,  2.0655512e-28},
+  { 7.6471637e-13,  7.0387287e-30},
+  { 4.7794773e-14,  4.3992054e-31},
+  { 2.8114572e-15,  1.6508842e-31}
+};
+
+static const double fp64_inv_fact[n_inv_fact][2] = {
+  { 1.66666666666666657e-01,  9.25185853854297066e-18},
+  { 4.16666666666666644e-02,  2.31296463463574266e-18},
+  { 8.33333333333333322e-03,  1.15648231731787138e-19},
+  { 1.38888888888888894e-03, -5.30054395437357706e-20},
+  { 1.98412698412698413e-04,  1.72095582934207053e-22},
+  { 2.48015873015873016e-05,  2.15119478667758816e-23},
+  { 2.75573192239858925e-06, -1.85839327404647208e-22},
+  { 2.75573192239858883e-07,  2.37677146222502973e-23},
+  { 2.50521083854417202e-08, -1.44881407093591197e-24},
+  { 2.08767569878681002e-09, -1.20734505911325997e-25},
+  { 1.60590438368216133e-10,  1.25852945887520981e-26},
+  { 1.14707455977297245e-11,  2.06555127528307454e-28},
+  { 7.64716373181981641e-13,  7.03872877733453001e-30},
+  { 4.77947733238738525e-14,  4.39920548583408126e-31},
+  { 2.81145725434552060e-15,  1.65088427308614326e-31}
+};
+
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
 template <typename T>
@@ -374,12 +413,15 @@ template<typename T>
 static two<T> sin_taylor(const two<T> &input) {
 
   T pointfive, local_eps;
+  T* local_ptr_inv_fact;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
     local_eps = fp32_eps;
+    local_ptr_inv_fact = &fp32_inv_fact[0][0];
   } else if constexpr (std::is_same_v<T, double>) {
     pointfive = 0.5;
     local_eps = fp64_eps;
+    local_ptr_inv_fact = &fp64_inv_fact[0][0];
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
   }
@@ -398,6 +440,12 @@ static two<T> sin_taylor(const two<T> &input) {
   s = input;
   r = input;
 
+  do {
+    r = mul(r, x);
+    t = mul(r, two<T>(*local_ptr_inv_fact[i][0], *local_ptr_inv_fact[i][1]));
+    s = add(s, t);
+    i +=2;
+  } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
 // Reference: QD / dd_real.cpp
