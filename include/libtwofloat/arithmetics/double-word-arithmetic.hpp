@@ -364,6 +364,7 @@ inline two<T> sqr(const two<T> &input) {
   p2 += twopointzero * input.h * input.l;
   p2 += input.l * input.l;
   s1 = quick_two_sum(p1, p2, s2);
+  return two<T>(s1, s2);
 }
 
 // Reference: QD / dd_real.cpp
