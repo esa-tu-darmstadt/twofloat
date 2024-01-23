@@ -276,10 +276,33 @@ inline T to_double(const two<T> &input) {
   return input.h;
 }
 
+// Reference: QD / inline.h
+/* Computes fl(input * input) and err(input * input) */
+template <typename T>
+inline T two_sqr(T input, T &err) {
+
+  T twopointzero;
+  if constexpr (std::is_same_v<T, float>) {
+    twopointzero = 2.0f;
+  } else if constexpr (std::is_same_v<T, double>) {
+    twopointzero = 2.0;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  T hi, lo;
+  T q = input * input;
+  split(input, hi, lo);
+  err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
+  return q;
+}
+
 // Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
-
+  T p1, p2;
+  T s1, s2;
+  p1 = two_sqr(input.h, p2);
 }
 
 // Reference: QD / dd_real.cpp
