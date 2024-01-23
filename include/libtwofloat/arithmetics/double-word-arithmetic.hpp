@@ -338,9 +338,22 @@ inline T two_sqr(T input, T &err) {
 // Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
+
+  T twopointzero;
+  if constexpr (std::is_same_v<T, float>) {
+    twopointzero = 2.0f;
+  } else if constexpr (std::is_same_v<T, double>) {
+    twopointzero = 2.0;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
   T p1, p2;
   T s1, s2;
   p1 = two_sqr(input.h, p2);
+  p2 += twopointzero * input.h * input.l;
+  p2 += input.l * input.l;
+  s1 = quick_two_sum(p1, p2, s2);
 }
 
 // Reference: QD / dd_real.cpp
