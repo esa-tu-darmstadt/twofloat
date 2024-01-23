@@ -448,6 +448,13 @@ static two<T> sin_taylor(const two<T> &input) {
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
+// Reference: QD / dd_inline.h
+/* double-double * double, where double is a power of 2. */
+template<typename T>
+inline two<T> mul_pwr2(const two<T> &input, T b) {
+  return two<T>(input.h * b, input.l * b);
+}
+
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
