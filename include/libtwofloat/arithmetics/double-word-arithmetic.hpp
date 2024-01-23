@@ -233,5 +233,24 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
   } else
     static_assert(sizeof(T) == 0, "Unsupported mode");
 }
+
+// TODO: transform this to FP32 (this is FP64)
+const two<float> fp32_2pi = two<float>(6.283185307179586232e+00, 2.449293598294706414e-16);
+
+// TODO: check it was correctly copied from QD
+const two<double> fp64_2pi = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
+
+template <typename T>
+inline two<T> sin(const two<T> &input) {
+
+  // TODO: make sure this is already supported in twofloat
+  if (input.is_zero()) {
+    return 0.0;
+  }
+
+  // Approximately reducing modulo 2*pi
+  //two<T> z =
+
+}
 }  // namespace doubleword
 }  // namespace twofloat
