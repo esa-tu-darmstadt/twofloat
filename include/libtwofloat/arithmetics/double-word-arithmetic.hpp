@@ -335,6 +335,16 @@ inline T two_sqr(T input, T &err) {
   return q;
 }
 
+// Reference: QD / inline.h
+/* Computes fl(a+b) and err(a+b).
+   Assumes |a| >= |b|. */
+template <typename T>
+inline T quick_two_sum(T a, T b, T &err) {
+  T s = a + b;
+  err = b - (s - a);
+  return s;
+}
+
 // Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
