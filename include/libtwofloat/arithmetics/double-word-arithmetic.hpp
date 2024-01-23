@@ -290,10 +290,10 @@ inline two<T> sin(const two<T> &input) {
   two<T> r = input - mul(local_2pi, z);
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
-  two<T> t;
 
   //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive);
+  two<T> t = r - mul(local_pi2, q)
 
 }
 }  // namespace doubleword
