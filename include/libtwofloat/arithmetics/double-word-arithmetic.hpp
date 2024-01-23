@@ -250,6 +250,7 @@ inline float nint(float input) {
   return std::floor(input + 0.5f);
 }
 
+// Reference: QD / dd_real.cpp
 template <typename T>
 inline two<T> sin(const two<T> &input) {
 
