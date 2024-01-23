@@ -243,11 +243,22 @@ const two<double> fp64_2pi = two<double>(6.283185307179586232e+00, 2.44929359829
 
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
-inline float nint(float input) {
+template <typename T>
+inline T nint(T input) {
+  T pointfive;
+
+  if constexpr (std::is_same_v<T, float>) {
+    pointfive = 0.5f;
+  } else if constexpr (std::is_same_v<T, double>) {
+    pointfive = 0.5;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
   if(input = std::floor(input)) {
     return input;
   }
-  return std::floor(input + 0.5f);
+  return std::floor(input + pointfive);
 }
 
 // Reference: QD / dd_real.cpp
@@ -259,8 +270,18 @@ inline two<T> sin(const two<T> &input) {
     return 0.0;
   }
 
+  T local_2pi;
+  if constexpr (std::is_same_v<T, float>) {
+    local_2pi = fp32_2pi;
+  } else if constexpr (std::is_same_v<T, double>) {
+    local_2pi = fp64_2pi;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
   // Approximately reducing modulo 2*pi
-  //two<T> z =
+  two<T> z = nint(input / local_2pi);
+  two<T> r = input - mul(local_2pi, z);
 
 }
 }  // namespace doubleword
