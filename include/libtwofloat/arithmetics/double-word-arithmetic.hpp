@@ -292,6 +292,38 @@ static const double fp64_inv_fact[n_inv_fact][2] = {
   { 2.81145725434552060e-15,  1.65088427308614326e-31}
 };
 
+/* Table of sin(k * pi/16) and cos(k * pi/16). */
+
+// Reference: QD / dd_real.cpp
+static const float fp32_cos_table [4][2] = {
+  {9.8078528e-01, 1.8546939e-17},
+  {9.2387953e-01, 1.7645047e-17},
+  {8.3146961e-01, 1.4073856e-18},
+  {7.0710678e-01, -4.8336466e-17}
+};
+
+static const double fp64_cos_table [4][2] = {
+  {9.807852804032304306e-01, 1.854693999782500573e-17},
+  {9.238795325112867385e-01, 1.764504708433667706e-17},
+  {8.314696123025452357e-01, 1.407385698472802389e-18},
+  {7.071067811865475727e-01, -4.833646656726456726e-17}
+};
+
+// Reference: QD / dd_real.cpp
+static const single fp32_sin_table [4][2] = {
+  {1.9509032e-01, -7.9910790e-18},
+  {3.8268343e-01, -1.0050772e-17},
+  {5.5557023e-01,  4.7094109e-17},
+  {7.0710678e-01, -4.8336466e-17}
+};
+
+static const double fp64_sin_table [4][2] = {
+  {1.950903220161282758e-01, -7.991079068461731263e-18},
+  {3.826834323650897818e-01, -1.005077269646158761e-17},
+  {5.555702330196021776e-01,  4.709410940561676821e-17},
+  {7.071067811865475727e-01, -4.833646656726456726e-17}
+};
+
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
 template <typename T>
@@ -505,18 +537,23 @@ inline two<T> sin(const two<T> &input) {
   }
 
   T local_2pi, local_pi2, pointfive, local_pi16, local_nan;
+  T* local_ptr_cos_table, local_ptr_sin_table;
   if constexpr (std::is_same_v<T, float>) {
     local_2pi  = fp32_2pi;
     local_pi2  = fp32_pi2;
     pointfive  = 0.5f;
     local_pi16 = fp32_pi16:
     local_nan  = fp32_nan;
+    local_ptr_cos_table = &fp32_cos_table[0][0];
+    local_ptr_sin_table = &fp32_sin_table[0][0];
   } else if constexpr (std::is_same_v<T, double>) {
     local_2pi  = fp64_2pi;
     local_pi2  = fp64_pi2;
     pointfive  = 0.5;
     local_pi16 = fp64_pi16;
     local_nan  = fp64_nan;
+    local_ptr_cos_table = &fp64_cos_table[0][0];
+    local_ptr_sin_table = &fp64_sin_table[0][0];
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
   }
@@ -558,6 +595,10 @@ inline two<T> sin(const two<T> &input) {
         return -sin_taylor(t);
     }
   }
+
+  two<T> u(local_ptr_cos_table[abs_k - 1][0], local_ptr_cos_table[abs_k - 1][1]);
+  two<T> u(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
+  two<T> sin_t, cos_t;
 }
 }  // namespace doubleword
 }  // namespace twofloat
