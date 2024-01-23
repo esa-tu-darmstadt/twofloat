@@ -395,6 +395,8 @@ static two<T> sin_taylor(const two<T> &input) {
 
   int i = 0;
   x = -sqr(input);
+  s = input;
+  r = input;
 
 }
 
