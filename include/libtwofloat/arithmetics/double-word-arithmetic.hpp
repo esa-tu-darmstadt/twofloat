@@ -527,6 +527,30 @@ static two<T> cos_taylor(const two<T> &input) {
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
+template <typename T>
+static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
+
+  T zeropointzero, onepointzero;
+  if constexpr (std::is_same_v<T, float>) {
+    zeropointzero = 0.0f;
+    onepointzero = 1.0f
+  } else if constexpr (std::is_same_v<T, double>) {
+    zeropointzero = 0.0;
+    onepointzero = 1.0;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  if (input.is_zero()) {
+    sin_a = zeropointzero;
+    cos_a = onepointzero;
+    return;
+  }
+
+  sin_a = sin_taylor(input);
+  cos_a = sqrt(onepointzero - sqr(sin_a));
+}
+
 // Reference: QD / dd_real.cpp
 template <typename T>
 inline two<T> sin(const two<T> &input) {
