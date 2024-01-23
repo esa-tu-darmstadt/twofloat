@@ -277,6 +277,13 @@ inline T to_double(const two<T> &input) {
 }
 
 // Reference: QD / inline.h
+/* Computes high word and low word of input */
+template <typename T>
+inline void split(T input, T &hi, T &lo) {
+
+}
+
+// Reference: QD / inline.h
 /* Computes fl(input * input) and err(input * input) */
 template <typename T>
 inline T two_sqr(T input, T &err) {
