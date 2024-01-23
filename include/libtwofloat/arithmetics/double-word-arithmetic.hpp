@@ -621,8 +621,36 @@ inline two<T> sin(const two<T> &input) {
   }
 
   two<T> u(local_ptr_cos_table[abs_k - 1][0], local_ptr_cos_table[abs_k - 1][1]);
-  two<T> u(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
+  two<T> v(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
   two<T> sin_t, cos_t;
+  sincos_taylor(t, sin_t, cos_t);
+  if (j == 0) {
+    if (k > 0) {
+      r = add(mul(u, sin_t), mul(v, cos_t));
+    } else {
+      r = sub(mul(u, sin_t), mul(v, cos_t));
+    }
+  } else if (j == 1) {
+    if (k > 0) {
+      r = sub(mul(u, cos_t), mul(v, sin_t));
+    } else {
+      r = add(mul(u, cos_t), mul(v, sin_t));
+    }
+  } else if (j == -1) {
+    if (k > 0) {
+      r = sub(mul(v, sin_t), mul(u, cos_t));
+    } else if (k < 0) {
+      r = sub(-mul(u, cos_t), mul(v, sin_t));
+    }
+  } else {
+    if (k > 0) {
+      r = sub(-mul(u, sin_t), mul(v, cos_t));
+    } else {
+      r = sub(mul(v, cos_t), mul(u, sin_t));
+    }
+  }
+
+  return r;
 }
 }  // namespace doubleword
 }  // namespace twofloat
