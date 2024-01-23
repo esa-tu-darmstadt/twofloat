@@ -236,12 +236,14 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 
 // Reference: QD / dd_const.cpp
 // TODO: transform this to FP32 (this is FP64)
-const two<float> fp32_2pi = two<float>(6.2831853e+00, 2.4492935e-16);
-const two<float> fp32_pi2 = two<float>(1.5707963e+00, 6.1232339e-17);
+const two<float> fp32_2pi  = two<float>(6.2831853e+00, 2.4492935e-16);
+const two<float> fp32_pi2  = two<float>(1.5707963e+00, 6.1232339e-17);
+const two<float> fp32_pi16 = two<float>(1.9634954e-01, 7.6540424e-18);
 
 // TODO: check it was correctly copied from QD
-const two<double> fp64_2pi = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
-const two<double> fp64_pi2 = two<double>(1.570796326794896558e+00, 6.123233995736766036e-17);
+const two<double> fp64_2pi  = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
+const two<double> fp64_pi2  = two<double>(1.570796326794896558e+00, 6.123233995736766036e-17);
+const two<double> fp64_pi16 = two<double>(1.963495408493620697e-01, 7.654042494670957545e-18);
 
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
@@ -272,15 +274,17 @@ inline two<T> sin(const two<T> &input) {
     return 0.0;
   }
 
-  T local_2pi, local_pi2, pointfive;
+  T local_2pi, local_pi2, pointfive, local_pi16;
   if constexpr (std::is_same_v<T, float>) {
-    local_2pi = fp32_2pi;
-    local_pi2 = fp32_pi2;
-    pointfive = 0.5f;
+    local_2pi  = fp32_2pi;
+    local_pi2  = fp32_pi2;
+    pointfive  = 0.5f;
+    local_pi16 = fp32_pi16:
   } else if constexpr (std::is_same_v<T, double>) {
-    local_2pi = fp64_2pi;
-    local_pi2 = fp64_pi2;
-    pointfive = 0.5;
+    local_2pi  = fp64_2pi;
+    local_pi2  = fp64_pi2;
+    pointfive  = 0.5;
+    local_pi16 = fp64_pi16:
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
   }
@@ -294,6 +298,8 @@ inline two<T> sin(const two<T> &input) {
   //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive);
   two<T> t = r - mul(local_pi2, q);
+  int j = static_cast<int>(q);
+  q = std::floor(t.h / local_pi16.h + pointfive);
 
 }
 }  // namespace doubleword
