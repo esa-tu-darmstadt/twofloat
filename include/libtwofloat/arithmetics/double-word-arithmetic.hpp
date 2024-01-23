@@ -236,18 +236,22 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 
 // Reference: QD / dd_const.cpp / inline.h
 // TODO: transform this to FP32 (this is FP64)
+// TODO: check ranges (i.e., exponents)
 const two<float> fp32_2pi  = two<float>(6.2831853e+00, 2.4492935e-16);
 const two<float> fp32_pi2  = two<float>(1.5707963e+00, 6.1232339e-17);
 const two<float> fp32_pi16 = two<float>(1.9634954e-01, 7.6540424e-18);
 static const float fp32_nan = std::numeric_limits<float>::quiet_NaN();
-const double fp32_eps = 4.9303806e-32;  // 2^-104
+const float fp32_eps = 4.9303806e-32;  // 2^-104
+const double fp32_qd_split_thresh = 6.6969287e+299 // = 2^996
 
 // TODO: check it was correctly copied from QD
+// TODO: check ranges (i.e., exponents)
 const two<double> fp64_2pi  = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
 const two<double> fp64_pi2  = two<double>(1.570796326794896558e+00, 6.123233995736766036e-17);
 const two<double> fp64_pi16 = two<double>(1.963495408493620697e-01, 7.654042494670957545e-18);
 static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
 const double fp64_eps = 4.93038065763132e-32;  // 2^-104
+const double fp64_qd_split_thresh = 6.69692879491417e+299 // = 2^996
 
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
@@ -280,7 +284,34 @@ inline T to_double(const two<T> &input) {
 /* Computes high word and low word of input */
 template <typename T>
 inline void split(T input, T &hi, T &lo) {
+  T temp;
 
+  T local_qd_split_thresh;
+  T local_split_factor;
+  if constexpr (std::is_same_v<T, float>) {
+    local_qd_split_thresh = fp32_qd_split_thresh;
+    local_split_factor = 3.7252902e-09;  // 2^-28
+  } else if constexpr (std::is_same_v<T, double>) {
+    local_qd_split_thresh = fp64_qd_split_thresh;
+    local_split_factor = 3.7252902984619140625e-09;  // 2^-28
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  const T qd_splitter = 134217729.0;               // = 2^27 + 1
+
+  if(input > local_qd_split_thresh || input < -local_qd_split_thresh) {
+    input *= local_split_factor; // 2^-28
+    temp = qd_splitter * input;
+    hi = temp - (temp - input);
+    lo = input - hi;
+    hi *= 268435456.0;  // 2^28
+    lo *= 268435456.0;  // 2^28
+  } else {
+    temp = qd_splitter * input;
+    hi = temp - (temp - input);
+    lo = input - hi;
+  }
 }
 
 // Reference: QD / inline.h
