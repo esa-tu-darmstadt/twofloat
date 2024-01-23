@@ -313,6 +313,11 @@ inline two<T> sin(const two<T> &input) {
     return local_nan;
   }
 
+  if (abs_k > 4) {
+    std::error("LSV: cannot reduce modulo pi/16");
+    return local_nan;
+  }
+
 }
 }  // namespace doubleword
 }  // namespace twofloat
