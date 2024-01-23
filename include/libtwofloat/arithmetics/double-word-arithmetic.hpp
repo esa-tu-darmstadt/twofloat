@@ -234,11 +234,21 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
     static_assert(sizeof(T) == 0, "Unsupported mode");
 }
 
+// Reference: QD / dd_const.cpp
 // TODO: transform this to FP32 (this is FP64)
 const two<float> fp32_2pi = two<float>(6.2831853e+00, 2.4492935e-16);
 
 // TODO: check it was correctly copied from QD
 const two<double> fp64_2pi = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
+
+// Reference: QD / inline.h
+/* Computes the nearest integer to input. */
+inline float nint(float input) {
+  if(input = std::floor(input)) {
+    return input;
+  }
+  return std::floor(input + 0.5f);
+}
 
 template <typename T>
 inline two<T> sin(const two<T> &input) {
