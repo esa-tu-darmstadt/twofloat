@@ -276,6 +276,12 @@ inline T to_double(const two<T> &input) {
   return input.h;
 }
 
+// Reference: QD / dd_inline.h
+template <typename T>
+inline two<T> sqr(const two<T> &input) {
+
+}
+
 // Reference: QD / dd_real.cpp
 /* Computes sin(a) using Taylor series.
    Assumes |a| <= pi/32 */
@@ -294,6 +300,16 @@ static two<T> sin_taylor(const two<T> &input) {
   }
 
   const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
+
+  two<T> r, s, t, x;
+
+  // TODO: make sure this is already supported in twofloat
+  if (input.is_zero()) {
+    return 0.0;
+  }
+
+  int i = 0;
+  x = -sqr(input);
 
 }
 
