@@ -444,7 +444,7 @@ static two<T> sin_taylor(const two<T> &input) {
     r = mul(r, x);
     t = mul(r, two<T>(*local_ptr_inv_fact[i][0], *local_ptr_inv_fact[i][1]));
     s = add(s, t);
-    i +=2;
+    i += 2;
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
@@ -487,6 +487,12 @@ static two<T> cos_taylor(const two<T> &input) {
   r = x;
   s = add(onepointzero, mul_pwr2(r, pointfive));
   int i = 1;
+  do {
+    r = mul(r, x);
+    t = mul(r, two<T>(*local_ptr_inv_fact[i][0], *local_ptr_inv_fact[i][1]));
+    s = add(s, t);
+    i += 2;
+  } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 }
 
 // Reference: QD / dd_real.cpp
