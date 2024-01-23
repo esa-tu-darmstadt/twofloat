@@ -240,12 +240,14 @@ const two<float> fp32_2pi  = two<float>(6.2831853e+00, 2.4492935e-16);
 const two<float> fp32_pi2  = two<float>(1.5707963e+00, 6.1232339e-17);
 const two<float> fp32_pi16 = two<float>(1.9634954e-01, 7.6540424e-18);
 static const float fp32_nan = std::numeric_limits<float>::quiet_NaN();
+const double fp32_eps = 4.9303806e-32;  // 2^-104
 
 // TODO: check it was correctly copied from QD
 const two<double> fp64_2pi  = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
 const two<double> fp64_pi2  = two<double>(1.570796326794896558e+00, 6.123233995736766036e-17);
 const two<double> fp64_pi16 = two<double>(1.963495408493620697e-01, 7.654042494670957545e-18);
 static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
+const double fp64_eps = 4.93038065763132e-32;  // 2^-104
 
 // Reference: QD / inline.h
 /* Computes the nearest integer to input. */
@@ -265,6 +267,34 @@ inline T nint(T input) {
     return input;
   }
   return std::floor(input + pointfive);
+}
+
+// Reference: QD / dd_inline.h
+/* Cast to double. */
+template <typename T>
+inline T to_double(const two<T> &input) {
+  return input.h;
+}
+
+// Reference: QD / dd_real.cpp
+/* Computes sin(a) using Taylor series.
+   Assumes |a| <= pi/32 */
+template<typename T>
+static two<T> sin_taylor(const two<T> &input) {
+
+  T pointfive, local_eps;
+  if constexpr (std::is_same_v<T, float>) {
+    pointfive = 0.5f;
+    local_eps = fp32_eps;
+  } else if constexpr (std::is_same_v<T, double>) {
+    pointfive = 0.5;
+    local_eps = fp64_eps;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
+
 }
 
 // Reference: QD / dd_real.cpp
