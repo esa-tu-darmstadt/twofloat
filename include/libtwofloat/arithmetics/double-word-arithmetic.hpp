@@ -478,7 +478,7 @@ static two<T> cos_taylor(const two<T> &input) {
 
   x = -sqr(input);
   r = x;
-  s = 1.0 + mul_pwr2(r, pointfive);
+  s = add(onepointzero, mul_pwr2(r, pointfive));
   int i = 1;
 }
 
