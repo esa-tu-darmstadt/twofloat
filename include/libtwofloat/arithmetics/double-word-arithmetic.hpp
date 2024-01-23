@@ -235,7 +235,7 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 }
 
 // TODO: transform this to FP32 (this is FP64)
-const two<float> fp32_2pi = two<float>(6.283185307179586232e+00, 2.449293598294706414e-16);
+const two<float> fp32_2pi = two<float>(6.2831853e+00, 2.4492935e-16);
 
 // TODO: check it was correctly copied from QD
 const two<double> fp64_2pi = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
