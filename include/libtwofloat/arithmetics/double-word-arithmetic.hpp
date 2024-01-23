@@ -546,6 +546,18 @@ inline two<T> sin(const two<T> &input) {
     return local_nan;
   }
 
+  if (k == 0) {
+    switch(j) {
+      case 0:
+        return sin_taylor(t);
+      case 1:
+        return cos_taylor(t);
+      case -1:
+        return -cos_taylor(t);
+      default:
+        return -sin_taylor(t);
+    }
+  }
 }
 }  // namespace doubleword
 }  // namespace twofloat
