@@ -539,13 +539,44 @@ static two<T> cos_taylor(const two<T> &input) {
   return s;
 }
 
+// Reference: QD / dd_real.cpp
+/* Computes the square root of the double-double number dd.
+   NOTE: dd must be a non-negative number. */
+template <typename T>
+two<T> sqrt(const two<T> &input) {
+  /* Strategy:  Use Karp's trick:  if x is an approximation
+     to sqrt(a), then
+
+        sqrt(a) = a*x + [a - (a*x)^2] * x / 2   (approx)
+
+     The approximation is accurate to twice the accuracy of x.
+     Also, the multiplication (a*x) and [-]*x can be done with
+     only half the precision.
+  */
+
+  T zeropointzero;
+  if constexpr (std::is_same_v<T, float>) {
+    zeropointzero = 0.0f;
+  } else if constexpr (std::is_same_v<T, double>) {
+    zeropointzero = 0.0;
+  } else {
+    std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  if (input.is_zero()) {
+    return zeropointzero;
+  }
+
+}
+
+// Reference: QD / dd_real.cpp
 template <typename T>
 static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 
   T zeropointzero, onepointzero;
   if constexpr (std::is_same_v<T, float>) {
     zeropointzero = 0.0f;
-    onepointzero = 1.0f
+    onepointzero = 1.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     zeropointzero = 0.0;
     onepointzero = 1.0;
@@ -560,7 +591,7 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   }
 
   sin_a = sin_taylor(input);
-  cos_a = sqrt(onepointzero - sqr(sin_a));
+  cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
 }
 
 // Reference: QD / dd_real.cpp
