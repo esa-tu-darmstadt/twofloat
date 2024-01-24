@@ -255,6 +255,9 @@ TEST(DoubleWordArithmetic, DivFPTest) { divFPTest<false>(); }
 
 TEST(DoubleWordArithmetic, DivFPFMATest) { divFPTest<true>(); }
 
+TEST(DoubleWordArithmetic, SinTest) {}
+  float x = 10;
+  float sinx = std::sin(x);
 }  // namespace test
 }  // namespace doubleword
 }  // namespace twofloat
