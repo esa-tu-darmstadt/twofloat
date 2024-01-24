@@ -485,6 +485,8 @@ static two<T> sin_taylor(const two<T> &input) {
     s = add(s, t);
     i += 2;
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+
+  return s;
 }
 
 // Reference: QD / dd_inline.h
@@ -533,6 +535,8 @@ static two<T> cos_taylor(const two<T> &input) {
     s = add(s, t);
     i += 2;
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+
+  return s;
 }
 
 template <typename T>
