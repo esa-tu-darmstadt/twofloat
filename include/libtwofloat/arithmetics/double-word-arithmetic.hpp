@@ -450,14 +450,17 @@ static two<T> sin_taylor(const two<T> &input) {
 
   T pointfive, local_eps;
   T* local_ptr_inv_fact;
+  T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
     local_eps = fp32_eps;
     local_ptr_inv_fact = &fp32_inv_fact[0][0];
+    zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     pointfive = 0.5;
     local_eps = fp64_eps;
     local_ptr_inv_fact = &fp64_inv_fact[0][0];
+    zeropointzero = 0.0;
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
   }
@@ -468,7 +471,7 @@ static two<T> sin_taylor(const two<T> &input) {
 
   // TODO: make sure this is already supported in twofloat
   if (input.is_zero()) {
-    return 0.0;
+    return zeropointzero;
   }
 
   int i = 0;
@@ -560,13 +563,9 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 template <typename T>
 inline two<T> sin(const two<T> &input) {
 
-  // TODO: make sure this is already supported in twofloat
-  if (input.is_zero()) {
-    return 0.0;
-  }
-
   T local_2pi, local_pi2, pointfive, local_pi16, local_nan;
   T* local_ptr_cos_table, local_ptr_sin_table;
+  T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     local_2pi  = fp32_2pi;
     local_pi2  = fp32_pi2;
@@ -575,6 +574,7 @@ inline two<T> sin(const two<T> &input) {
     local_nan  = fp32_nan;
     local_ptr_cos_table = &fp32_cos_table[0][0];
     local_ptr_sin_table = &fp32_sin_table[0][0];
+    zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     local_2pi  = fp64_2pi;
     local_pi2  = fp64_pi2;
@@ -583,8 +583,14 @@ inline two<T> sin(const two<T> &input) {
     local_nan  = fp64_nan;
     local_ptr_cos_table = &fp64_cos_table[0][0];
     local_ptr_sin_table = &fp64_sin_table[0][0];
+    zeropointzero = 0.0;
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
+  }
+
+  // TODO: make sure this is already supported in twofloat
+  if (input.is_zero()) {
+    return zeropointzero;
   }
 
   // Approximately reducing modulo 2*pi
