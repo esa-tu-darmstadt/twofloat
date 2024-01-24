@@ -539,6 +539,20 @@ static two<T> cos_taylor(const two<T> &input) {
   return s;
 }
 
+// Reference QD / inline.h
+template <typename T>
+inline T two_sum(T a, T b, T &err) {
+
+}
+
+// Reference: QD / dd_inline.h
+template <typename T>
+inline two<T> dd_add(T a, T b) {
+  T s, e;
+  s = two_sum(a, b, e); // TODO: make sure this has not been already implemented
+  return two<T> (s, e);
+}
+
 // Reference: QD / dd_real.cpp
 /* Computes the square root of the double-double number dd.
    NOTE: dd must be a non-negative number. */
@@ -554,11 +568,17 @@ two<T> sqrt(const two<T> &input) {
      only half the precision.
   */
 
-  T zeropointzero;
+  T zeropointzero, onepointzero, pointfive, local_nan;
   if constexpr (std::is_same_v<T, float>) {
+    onepointzero = 1.0f;
     zeropointzero = 0.0f;
+    pointfive = 0.5f;
+    local_nan = fp32_nan;
   } else if constexpr (std::is_same_v<T, double>) {
+    onepointzero = 1.0;
     zeropointzero = 0.0;
+    pointfive = 0.5;
+    local_nan = fp64_nan;
   } else {
     std::error("LSV: other types are unsupported"); // TODO: make sure std::error is best way to proceed here
   }
@@ -567,6 +587,15 @@ two<T> sqrt(const two<T> &input) {
     return zeropointzero;
   }
 
+  if (input.is_negative()) {
+    std::error("LSV: sqrt(): negative argument"); // TODO: make sure std::error is best way to proceed here
+    return local_nan;
+  }
+
+  T x = onepointzero / std::sqrt(input.h);
+  T ax = mul(input.h, x);
+  two<T> temp = sub(input, sqr(ax));
+  return dd_add(ax, temp.h * x * pointfive);
 }
 
 // Reference: QD / dd_real.cpp
