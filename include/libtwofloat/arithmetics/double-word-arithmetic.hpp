@@ -491,6 +491,7 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
   return two<T>(input.h * b, input.l * b);
 }
 
+// Reference: QD / dd_real.cpp
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
