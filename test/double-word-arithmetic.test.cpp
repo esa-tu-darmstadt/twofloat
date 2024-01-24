@@ -260,7 +260,7 @@ TEST(DoubleWordArithmetic, SinTest) {}
   float sinx = std::sin(x);
 
   two<float> two_x = {x, 0.0f};
-  //float two_sinx = doubleword::sin(two_x);
+  two<float> sin_two_x = doubleword::sin(two_x);
 }  // namespace test
 }  // namespace doubleword
 }  // namespace twofloat
