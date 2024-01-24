@@ -672,7 +672,7 @@ inline two<T> sin(const two<T> &input) {
   two<T> t = r - mul(local_pi2, q);
   int j = static_cast<int>(q);
   q = std::floor(t.h / local_pi16.h + pointfive);
-  t -= mul(local_pi16, q);
+  t = sub(t, mul(local_pi16, q));
   int k = static_cast<int>(q);
   int abs_k = std:abs(k);
 
