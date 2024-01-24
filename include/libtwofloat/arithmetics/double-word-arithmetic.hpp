@@ -234,7 +234,7 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
     static_assert(sizeof(T) == 0, "Unsupported mode");
 }
 
-// Reference: QD / dd_const.cpp / inline.h
+// Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
 // TODO: transform this to FP32 (this is FP64)
 // TODO: check ranges (i.e., exponents)
 const two<float> fp32_2pi  = two<float>(6.2831853e+00, 2.4492935e-16);
@@ -244,14 +244,12 @@ static const float fp32_nan = std::numeric_limits<float>::quiet_NaN();
 const float fp32_eps = 4.9303806e-32;  // 2^-104
 const double fp32_qd_split_thresh = 6.6969287e+299 // = 2^996
 
-// TODO: check it was correctly copied from QD
-// TODO: check ranges (i.e., exponents)
 const two<double> fp64_2pi  = two<double>(6.283185307179586232e+00, 2.449293598294706414e-16);
 const two<double> fp64_pi2  = two<double>(1.570796326794896558e+00, 6.123233995736766036e-17);
 const two<double> fp64_pi16 = two<double>(1.963495408493620697e-01, 7.654042494670957545e-18);
 static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
 const double fp64_eps = 4.93038065763132e-32;  // 2^-104
-const double fp64_qd_split_thresh = 6.69692879491417e+299 // = 2^996
+const double fp64_qd_split_thresh = 6.69692879491417e+299 // = 2^996 // TODO: check! range is beyond double
 
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
