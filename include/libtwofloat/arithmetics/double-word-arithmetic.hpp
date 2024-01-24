@@ -663,7 +663,7 @@ inline two<T> sin(const two<T> &input) {
 
   // Approximately reducing modulo 2*pi
   two<T> z = nint(input / local_2pi);
-  two<T> r = input - mul(local_2pi, z);
+  two<T> r = sub(input, mul(local_2pi, z));
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
 
