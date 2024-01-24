@@ -410,9 +410,9 @@ inline T two_sqr(T input, T &err) {
   return q;
 }
 
+// TODO: already implemented in twofloat?
 // Reference: QD / inline.h
-/* Computes fl(a+b) and err(a+b).
-   Assumes |a| >= |b|. */
+/* Computes fl(a+b) and err(a+b). Assumes |a| >= |b|. */
 template <typename T>
 inline T quick_two_sum(T a, T b, T &err) {
   T s = a + b;
