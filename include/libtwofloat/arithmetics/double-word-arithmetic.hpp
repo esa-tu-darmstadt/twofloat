@@ -540,16 +540,20 @@ static two<T> cos_taylor(const two<T> &input) {
 }
 
 // Reference QD / inline.h
+// TODO: make sure this has not been already implemented
 template <typename T>
 inline T two_sum(T a, T b, T &err) {
-
+  T s = a + b;
+  T bb = s - a;
+  err = (a - (s - bb)) - (b - bb);
+  return s;
 }
 
 // Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> dd_add(T a, T b) {
   T s, e;
-  s = two_sum(a, b, e); // TODO: make sure this has not been already implemented
+  s = two_sum(a, b, e);
   return two<T> (s, e);
 }
 
