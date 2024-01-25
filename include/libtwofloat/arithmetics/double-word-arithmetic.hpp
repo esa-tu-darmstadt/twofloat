@@ -515,8 +515,11 @@ static two<T> sin_taylor(const two<T> &input) {
   two<T> r, s, t, x;
 
   // TODO: make sure this is already supported in twofloat
-  if (input.is_zero()) {
-    return zeropointzero;
+  //if (input.is_zero()) {
+  if (input.eval() == zeropointzero) {
+    T hi, lo;
+    split(zeropointzero, hi, lo);
+    return two<T>{hi, lo};
   }
 
   int i = 0;
