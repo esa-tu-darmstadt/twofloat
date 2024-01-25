@@ -554,17 +554,20 @@ template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
   T pointfive, local_eps, onepointzero;
-  T* local_ptr_inv_fact;
+  const T* local_ptr_inv_fact;
+  T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
     local_eps = fp32_eps;
     onepointzero = 1.0f;
     local_ptr_inv_fact = &fp32_inv_fact[0][0];
+    zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     pointfive = 0.5;
     local_eps = fp64_eps;
     onepointzero = 1.0;
     local_ptr_inv_fact = &fp64_inv_fact[0][0];
+    zeropointzero = 0.0;
   } else {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
@@ -574,8 +577,11 @@ static two<T> cos_taylor(const two<T> &input) {
   two<T> r, s, t, x;
 
   // TODO: make sure this is already supported in twofloat
-  if (input.is_zero()) {
-    return onepointzero;
+  //if (input.is_zero()) {
+  if (input.eval() == zeropointzero) {
+    T hi, lo;
+    qd::split(zeropointzero, hi, lo);
+    return two<T>{hi, lo};
   }
 
   x = -sqr(input);
@@ -756,9 +762,9 @@ inline two<T> sin(const two<T> &input) {
     switch(j) {
       case 0:
         return sin_taylor(t);
-/*
       case 1:
         return cos_taylor(t);
+/*
       case -1:
         return two<T>{-cos_taylor(t).h, -cos_taylor(t).l}; // Reference: QD / dd_inline.h
       default:
