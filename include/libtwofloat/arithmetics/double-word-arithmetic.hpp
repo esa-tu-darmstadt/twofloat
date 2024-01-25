@@ -678,6 +678,7 @@ inline two<T> sin(const two<T> &input) {
 
   two<T> local_2pi;
   two<T> local_pi2;
+  two<T> local_pi16;
 /*
   T pointfive, local_pi16, local_nan;
   T* local_ptr_cos_table, local_ptr_sin_table;
@@ -687,8 +688,8 @@ inline two<T> sin(const two<T> &input) {
     local_2pi  = fp32_2pi;
     local_pi2  = fp32_pi2;
     pointfive  = 0.5f;
-  /*
     local_pi16 = fp32_pi16;
+   /*
     local_nan  = fp32_nan;
     local_ptr_cos_table = &fp32_cos_table[0][0];
     local_ptr_sin_table = &fp32_sin_table[0][0];
@@ -699,8 +700,8 @@ inline two<T> sin(const two<T> &input) {
     local_2pi  = fp64_2pi;
     local_pi2  = fp64_pi2;
     pointfive  = 0.5;
-  /*
     local_pi16 = fp64_pi16;
+  /*
     local_nan  = fp64_nan;
     local_ptr_cos_table = &fp64_cos_table[0][0];
     local_ptr_sin_table = &fp64_sin_table[0][0];
@@ -728,8 +729,8 @@ inline two<T> sin(const two<T> &input) {
   T q = std::floor(r.h / local_pi2.h + pointfive);
   two<T> t = sub<doubleword::Mode::Accurate>(r, mul<doubleword::Mode::Accurate, true>(local_pi2, q));
   int j = static_cast<int>(q);
-/*
   q = std::floor(t.h / local_pi16.h + pointfive);
+/*
   t = sub(t, mul(local_pi16, q));
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
