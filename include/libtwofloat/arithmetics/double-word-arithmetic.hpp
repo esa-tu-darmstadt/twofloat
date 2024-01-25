@@ -727,8 +727,8 @@ inline two<T> sin(const two<T> &input) {
   //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive);
   two<T> t = sub<doubleword::Mode::Accurate>(r, mul<doubleword::Mode::Accurate, true>(local_pi2, q));
-/*
   int j = static_cast<int>(q);
+/*
   q = std::floor(t.h / local_pi16.h + pointfive);
   t = sub(t, mul(local_pi16, q));
   int k = static_cast<int>(q);
