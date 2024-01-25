@@ -534,8 +534,8 @@ static two<T> sin_taylor(const two<T> &input) {
 
   do {
     r = mul<doubleword::Mode::Accurate, true>(r, x);
+    t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
   /*
-    t = mul(r, two<T>{(*local_ptr_inv_fact)[i][0], (*local_ptr_inv_fact)[i][1]});
     s = add(s, t);
     i += 2;
   */
