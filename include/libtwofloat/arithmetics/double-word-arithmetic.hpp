@@ -677,16 +677,17 @@ template <typename T>
 inline two<T> sin(const two<T> &input) {
 
   two<T> local_2pi;
+  two<T> local_pi2;
 /*
-  T local_pi2, pointfive, local_pi16, local_nan;
+  T pointfive, local_pi16, local_nan;
   T* local_ptr_cos_table, local_ptr_sin_table;
 */
-  T zeropointzero;
+  T zeropointzero, pointfive;
   if constexpr (std::is_same_v<T, float>) {
     local_2pi  = fp32_2pi;
-  /*
     local_pi2  = fp32_pi2;
     pointfive  = 0.5f;
+  /*
     local_pi16 = fp32_pi16;
     local_nan  = fp32_nan;
     local_ptr_cos_table = &fp32_cos_table[0][0];
@@ -696,9 +697,9 @@ inline two<T> sin(const two<T> &input) {
 
   } else if constexpr (std::is_same_v<T, double>) {
     local_2pi  = fp64_2pi;
-  /*
     local_pi2  = fp64_pi2;
     pointfive  = 0.5;
+  /*
     local_pi16 = fp64_pi16;
     local_nan  = fp64_nan;
     local_ptr_cos_table = &fp64_cos_table[0][0];
@@ -722,9 +723,10 @@ inline two<T> sin(const two<T> &input) {
   two<T> r = sub<doubleword::Mode::Accurate>(input, mul<doubleword::Mode::Accurate, true>(local_2pi, z));
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
-/*
+
   //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive);
+/*
   two<T> t = r - mul(local_pi2, q);
   int j = static_cast<int>(q);
   q = std::floor(t.h / local_pi16.h + pointfive);
