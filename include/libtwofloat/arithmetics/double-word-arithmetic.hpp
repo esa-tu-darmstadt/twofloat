@@ -380,7 +380,7 @@ inline two<T> nint(const two<T> &input) {
 
   if(hi == input.h) {
     /* High word is an integer already. Round the low word. */
-    lo = dq::nint(input.l);
+    lo = qd::nint(input.l);
 
     /* Renormalize. This is needed if h = some integer, l = 1/2. */
     hi = qd::quick_two_sum(hi, lo, lo);
