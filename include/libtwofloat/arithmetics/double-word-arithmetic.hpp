@@ -494,7 +494,7 @@ template<typename T>
 static two<T> sin_taylor(const two<T> &input) {
 
   T pointfive, local_eps;
-  T* local_ptr_inv_fact;
+  const T* local_ptr_inv_fact;
   T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
@@ -748,12 +748,14 @@ inline two<T> sin(const two<T> &input) {
     switch(j) {
       case 0:
         return sin_taylor(t);
+/*
       case 1:
         return cos_taylor(t);
       case -1:
         return two<T>{-cos_taylor(t).h, -cos_taylor(t).l}; // Reference: QD / dd_inline.h
       default:
         return two<T>{-sin_taylor(t).h, -sin_taylor(t).l};
+*/
     }
   }
 /*
