@@ -744,7 +744,6 @@ inline two<T> sin(const two<T> &input) {
     return two<T>{local_nan, local_nan};
   }
 
-/*
   if (k == 0) {
     switch(j) {
       case 0:
@@ -752,12 +751,12 @@ inline two<T> sin(const two<T> &input) {
       case 1:
         return cos_taylor(t);
       case -1:
-        return -cos_taylor(t);
+        return two<T>{-cos_taylor(t).h, -cos_taylor(t).l}; // Reference: QD / dd_inline.h
       default:
-        return -sin_taylor(t);
+        return two<T>{-sin_taylor(t).h, -sin_taylor(t).l};
     }
   }
-
+/*
   two<T> u(local_ptr_cos_table[abs_k - 1][0], local_ptr_cos_table[abs_k - 1][1]);
   two<T> v(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
   two<T> sin_t, cos_t;
