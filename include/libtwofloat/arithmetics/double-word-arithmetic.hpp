@@ -730,8 +730,8 @@ inline two<T> sin(const two<T> &input) {
   two<T> t = sub<doubleword::Mode::Accurate>(r, mul<doubleword::Mode::Accurate, true>(local_pi2, q));
   int j = static_cast<int>(q);
   q = std::floor(t.h / local_pi16.h + pointfive);
+  t = sub<doubleword::Mode::Accurate>(t, mul<doubleword::Mode::Accurate, true>(local_pi16, q));
 /*
-  t = sub(t, mul(local_pi16, q));
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
 
