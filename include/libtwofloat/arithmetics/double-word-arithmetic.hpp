@@ -718,8 +718,8 @@ inline two<T> sin(const two<T> &input) {
   }
 
   // Approximately reducing modulo 2*pi
-  two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div
-  two<T> r = sub(input, mul(local_2pi, z));
+  two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
+  two<T> r = sub<doubleword::Mode::Accurate>(input, mul<doubleword::Mode::Accurate, true>(local_2pi, z));
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
 /*
