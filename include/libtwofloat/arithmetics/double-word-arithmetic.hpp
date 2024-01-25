@@ -356,7 +356,68 @@ namespace qd {
     err = b - (s - a);
     return s;
   }
-}
+
+  // TODO: make sure it has not been already implemented in twofloat
+  // Reference: QD / inline.h
+  /* Computes high word and low word of input */
+  template <typename T>
+  inline void split(T input, T &hi, T &lo) {
+    T temp;
+
+    T local_qd_splitter;
+    T local_qd_split_thresh;
+    T local_split_factor;
+    T local_split_factor_2;
+    if constexpr (std::is_same_v<T, float>) {
+      local_qd_splitter = fp32_qd_splitter;
+      local_qd_split_thresh = fp32_qd_split_thresh;
+      local_split_factor = fp32_split_factor;
+      local_split_factor_2 = fp32_split_factor_2;
+    } else if constexpr (std::is_same_v<T, double>) {
+      local_qd_splitter = fp64_qd_splitter;
+      local_qd_split_thresh = fp64_qd_split_thresh;
+      local_split_factor = fp64_split_factor;
+      local_split_factor_2 = fp64_split_factor_2;
+    } else {
+      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    }
+
+    if(input > local_qd_split_thresh || input < -local_qd_split_thresh) {
+      input *= local_split_factor;
+      temp = local_qd_splitter * input;
+      hi = temp - (temp - input);
+      lo = input - hi;
+      hi *= local_split_factor_2;
+      lo *= local_split_factor_2;
+    } else {
+      temp = local_qd_splitter * input;
+      hi = temp - (temp - input);
+      lo = input - hi;
+    }
+  }
+
+  // Reference: QD / inline.h
+  /* Computes fl(input * input) and err(input * input) */
+  template <typename T>
+  inline T two_sqr(T input, T &err) {
+
+    T twopointzero;
+    if constexpr (std::is_same_v<T, float>) {
+      twopointzero = 2.0f;
+    } else if constexpr (std::is_same_v<T, double>) {
+      twopointzero = 2.0;
+    } else {
+      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    }
+
+    T hi, lo;
+    T q = input * input;
+    qd::split(input, hi, lo);
+    err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
+    return q;
+  }
+
+} // End namespace qd
 
 // Reference: QD / dd_inline.h
 /* Round to nearest integer */
@@ -405,65 +466,8 @@ inline T to_double(const two<T> &input) {
   return input.h;
 }
 
-// TODO: make sure it has not been already implemented in twofloat
-// Reference: QD / inline.h
-/* Computes high word and low word of input */
-template <typename T>
-inline void split(T input, T &hi, T &lo) {
-  T temp;
 
-  T local_qd_splitter;
-  T local_qd_split_thresh;
-  T local_split_factor;
-  T local_split_factor_2;
-  if constexpr (std::is_same_v<T, float>) {
-    local_qd_splitter = fp32_qd_splitter;
-    local_qd_split_thresh = fp32_qd_split_thresh;
-    local_split_factor = fp32_split_factor;
-    local_split_factor_2 = fp32_split_factor_2;
-  } else if constexpr (std::is_same_v<T, double>) {
-    local_qd_splitter = fp64_qd_splitter;
-    local_qd_split_thresh = fp64_qd_split_thresh;
-    local_split_factor = fp64_split_factor;
-    local_split_factor_2 = fp64_split_factor_2;
-  } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
-  }
 
-  if(input > local_qd_split_thresh || input < -local_qd_split_thresh) {
-    input *= local_split_factor;
-    temp = local_qd_splitter * input;
-    hi = temp - (temp - input);
-    lo = input - hi;
-    hi *= local_split_factor_2;
-    lo *= local_split_factor_2;
-  } else {
-    temp = local_qd_splitter * input;
-    hi = temp - (temp - input);
-    lo = input - hi;
-  }
-}
-
-// Reference: QD / inline.h
-/* Computes fl(input * input) and err(input * input) */
-template <typename T>
-inline T two_sqr(T input, T &err) {
-
-  T twopointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    twopointzero = 2.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    twopointzero = 2.0;
-  } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
-  }
-
-  T hi, lo;
-  T q = input * input;
-  split(input, hi, lo);
-  err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
-  return q;
-}
 
 // Reference: QD / dd_inline.h
 template <typename T>
@@ -480,11 +484,11 @@ inline two<T> sqr(const two<T> &input) {
 
   T p1, p2;
   T s1, s2;
-  p1 = two_sqr(input.h, p2);
+  p1 = qd::two_sqr(input.h, p2);
   p2 += twopointzero * input.h * input.l;
   p2 += input.l * input.l;
-  s1 = quick_two_sum(p1, p2, s2);
-  return two<T>(s1, s2);
+  s1 = qd::quick_two_sum(p1, p2, s2);
+  return two<T>{s1, s2};
 }
 
 // Reference: QD / dd_real.cpp
@@ -518,7 +522,7 @@ static two<T> sin_taylor(const two<T> &input) {
   //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    split(zeropointzero, hi, lo);
+    qd::split(zeropointzero, hi, lo);
     return two<T>{hi, lo};
   }
 
@@ -718,7 +722,7 @@ inline two<T> sin(const two<T> &input) {
   //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    split(zeropointzero, hi, lo);
+    qd::split(zeropointzero, hi, lo);
     return two<T>{hi, lo};
   }
 
