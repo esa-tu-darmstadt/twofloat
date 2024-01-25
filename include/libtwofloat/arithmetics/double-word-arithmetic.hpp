@@ -527,15 +527,18 @@ static two<T> sin_taylor(const two<T> &input) {
   }
 
   int i = 0;
-  x = -sqr(input);
+  two<T> temp = sqr(input);
+  x = two<T>{-temp.h, -temp.l};
   s = input;
   r = input;
 
   do {
-    r = mul(r, x);
-    t = mul(r, two<T>(*local_ptr_inv_fact[i][0], *local_ptr_inv_fact[i][1]));
+    r = mul<doubleword::Mode::Accurate, true>(r, x);
+  /*
+    t = mul(r, two<T>{(*local_ptr_inv_fact)[i][0], (*local_ptr_inv_fact)[i][1]});
     s = add(s, t);
     i += 2;
+  */
   } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
 
   return s;
