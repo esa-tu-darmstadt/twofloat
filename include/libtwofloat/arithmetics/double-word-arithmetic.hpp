@@ -324,24 +324,78 @@ static const double fp64_sin_table [4][2] = {
   {7.071067811865475727e-01, -4.833646656726456726e-17}
 };
 
-// Reference: QD / inline.h
-/* Computes the nearest integer to input. */
-template <typename T>
-inline T nint(T input) {
-  T pointfive;
+// Notice the definition of the qd namespace
+namespace qd {
 
+  // Reference: QD / inline.h
+  /* Computes the nearest integer to input. */
+  template <typename T>
+  inline T nint(T input) {
+    T pointfive;
+
+    if constexpr (std::is_same_v<T, float>) {
+      pointfive = 0.5f;
+    } else if constexpr (std::is_same_v<T, double>) {
+      pointfive = 0.5;
+    } else {
+      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    }
+
+    if(input = std::floor(input)) {
+      return input;
+    }
+    return std::floor(input + pointfive);
+  }
+
+  // TODO: already implemented in twofloat?
+  // Reference: QD / inline.h
+  /* Computes fl(a+b) and err(a+b). Assumes |a| >= |b|. */
+  template <typename T>
+  inline T quick_two_sum(T a, T b, T &err) {
+    T s = a + b;
+    err = b - (s - a);
+    return s;
+  }
+}
+
+// Reference: QD / dd_inline.h
+/* Round to nearest integer */
+template <typename T>
+inline two<T> nint(const two<T> &input) {
+  T hi = qd::nint(input.h);
+  T lo;
+
+  T zeropointzero, pointfive, onepointzero;
   if constexpr (std::is_same_v<T, float>) {
+    zeropointzero = 0.0f;
     pointfive = 0.5f;
+    onepointzero = 1.0f;
   } else if constexpr (std::is_same_v<T, double>) {
+    zeropointzero = 0.0;
     pointfive = 0.5;
+    onepointzero = 1.0;
   } else {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
 
-  if(input = std::floor(input)) {
-    return input;
+  if(hi == input.h) {
+    /* High word is an integer already. Round the low word. */
+    lo = dq::nint(input.l);
+
+    /* Renormalize. This is needed if h = some integer, l = 1/2. */
+    hi = qd::quick_two_sum(hi, lo, lo);
   }
-  return std::floor(input + pointfive);
+  else {
+    /* High word is not an integer */
+    lo = zeropointzero;
+    if(std::abs(hi - input.h) == pointfive && input.l < zeropointzero) {
+      /* There is a tie in the high word, consult the low word
+         to break the tie. */
+      hi -= onepointzero; /* NOTE: This does not cause INEXACT. */
+    }
+  }
+
+  return two<float>{hi, lo};
 }
 
 // Reference: QD / dd_inline.h
@@ -409,16 +463,6 @@ inline T two_sqr(T input, T &err) {
   split(input, hi, lo);
   err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
   return q;
-}
-
-// TODO: already implemented in twofloat?
-// Reference: QD / inline.h
-/* Computes fl(a+b) and err(a+b). Assumes |a| >= |b|. */
-template <typename T>
-inline T quick_two_sum(T a, T b, T &err) {
-  T s = a + b;
-  err = b - (s - a);
-  return s;
 }
 
 // Reference: QD / dd_inline.h
