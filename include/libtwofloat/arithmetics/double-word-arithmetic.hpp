@@ -731,10 +731,10 @@ inline two<T> sin(const two<T> &input) {
   int j = static_cast<int>(q);
   q = std::floor(t.h / local_pi16.h + pointfive);
   t = sub<doubleword::Mode::Accurate>(t, mul<doubleword::Mode::Accurate, true>(local_pi16, q));
-/*
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
 
+/*
   if (j < -2 || j > 2) {
 //    std::error("LSV: cannot reduce modulo pi/2");
     return local_nan;
