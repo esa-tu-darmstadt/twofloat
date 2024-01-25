@@ -677,8 +677,10 @@ template <typename T>
 inline two<T> sin(const two<T> &input) {
 
   two<T> local_2pi;
+/*
   T local_pi2, pointfive, local_pi16, local_nan;
   T* local_ptr_cos_table, local_ptr_sin_table;
+*/
   T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     local_2pi  = fp32_2pi;
@@ -716,7 +718,7 @@ inline two<T> sin(const two<T> &input) {
   }
 
   // Approximately reducing modulo 2*pi
-  two<T> z = nint(input / local_2pi);
+  two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div
   two<T> r = sub(input, mul(local_2pi, z));
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
