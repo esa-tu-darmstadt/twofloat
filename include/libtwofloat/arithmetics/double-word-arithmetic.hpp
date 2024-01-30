@@ -653,10 +653,10 @@ two<T> sqrt(const two<T> &input) {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
 
-  // TODO: make sure this is already supported in twofloat
-  //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
-    return two<T>{zeropointzero, zeropointzero};
+    T hi, lo;
+    qd::split(zeropointzero, hi, lo);
+    return two<T>{hi, lo};
   }
 
   // if (input.is_negative()) {
@@ -689,8 +689,6 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 
   // Reference: QD / dd_inline.h
   // Assignment is performed according to operator== 
-  // TODO: make sure this is already supported in twofloat
-  //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     sin_a.h = zeropointzero;
     sin_a.l = zeropointzero;
