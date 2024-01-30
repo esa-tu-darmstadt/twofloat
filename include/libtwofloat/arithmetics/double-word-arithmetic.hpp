@@ -716,33 +716,30 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_pi16;
   const T* local_ptr_cos_table;
   const T* local_ptr_sin_table;
-
   T zeropointzero, pointfive, local_nan;
+
   if constexpr (std::is_same_v<T, float>) {
-    local_2pi  = fp32_2pi;
-    local_pi2  = fp32_pi2;
-    pointfive  = 0.5f;
+    local_2pi = fp32_2pi;
+    local_pi2 = fp32_pi2;
     local_pi16 = fp32_pi16;
-    local_nan  = fp32_nan;
     local_ptr_cos_table = &fp32_cos_table[0][0];
     local_ptr_sin_table = &fp32_sin_table[0][0];
     zeropointzero = 0.0f;
-
+    pointfive  = 0.5f;
+    local_nan  = fp32_nan;
   } else if constexpr (std::is_same_v<T, double>) {
-    local_2pi  = fp64_2pi;
-    local_pi2  = fp64_pi2;
-    pointfive  = 0.5;
+    local_2pi = fp64_2pi;
+    local_pi2 = fp64_pi2;
     local_pi16 = fp64_pi16;
-    local_nan  = fp64_nan;
     local_ptr_cos_table = &fp64_cos_table[0][0];
     local_ptr_sin_table = &fp64_sin_table[0][0];
     zeropointzero = 0.0;
+    pointfive  = 0.5;
+    local_nan  = fp64_nan;
   } else {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
 
-  // TODO: make sure this is already supported in twofloat
-  //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     T hi, lo;
     qd::split(zeropointzero, hi, lo);
