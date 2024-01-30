@@ -647,8 +647,10 @@ two<T> sqrt(const two<T> &input) {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
 
-  if (input.is_zero()) {
-    return zeropointzero;
+  // TODO: make sure this is already supported in twofloat
+  //if (input.is_zero()) {
+  if (input.eval() == zeropointzero) {
+    return two<T>{zeropointzero, zeropointzero};
   }
 
   if (input.is_negative()) {
@@ -690,7 +692,7 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   }
 
   sin_a = sin_taylor(input);
-  //cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
+  cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
 }
 
 // Reference: QD / dd_real.cpp
