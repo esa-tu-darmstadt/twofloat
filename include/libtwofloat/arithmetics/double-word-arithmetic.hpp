@@ -696,8 +696,10 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_pi16;
 /*
   T pointfive, local_pi16;
-  T* local_ptr_cos_table, local_ptr_sin_table;
 */
+  const T* local_ptr_cos_table;
+  const T* local_ptr_sin_table;
+
   T zeropointzero, pointfive, local_nan;
   if constexpr (std::is_same_v<T, float>) {
     local_2pi  = fp32_2pi;
@@ -705,10 +707,8 @@ inline two<T> sin(const two<T> &input) {
     pointfive  = 0.5f;
     local_pi16 = fp32_pi16;
     local_nan  = fp32_nan;
-   /*
     local_ptr_cos_table = &fp32_cos_table[0][0];
     local_ptr_sin_table = &fp32_sin_table[0][0];
-  */
     zeropointzero = 0.0f;
 
   } else if constexpr (std::is_same_v<T, double>) {
@@ -717,10 +717,8 @@ inline two<T> sin(const two<T> &input) {
     pointfive  = 0.5;
     local_pi16 = fp64_pi16;
     local_nan  = fp64_nan;
-  /*
     local_ptr_cos_table = &fp64_cos_table[0][0];
     local_ptr_sin_table = &fp64_sin_table[0][0];
-  */
     zeropointzero = 0.0;
   } else {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
@@ -765,16 +763,15 @@ inline two<T> sin(const two<T> &input) {
         return sin_taylor(t);
       case 1:
         return cos_taylor(t);
-/*
       case -1:
         return two<T>{-cos_taylor(t).h, -cos_taylor(t).l}; // Reference: QD / dd_inline.h
       default:
         return two<T>{-sin_taylor(t).h, -sin_taylor(t).l};
-*/
     }
   }
+
+  two<T> u{(local_ptr_cos_table + (abs_k - 1))[0], (local_ptr_cos_table + (abs_k - 1))[1]};
 /*
-  two<T> u(local_ptr_cos_table[abs_k - 1][0], local_ptr_cos_table[abs_k - 1][1]);
   two<T> v(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
   two<T> sin_t, cos_t;
   sincos_taylor(t, sin_t, cos_t);
