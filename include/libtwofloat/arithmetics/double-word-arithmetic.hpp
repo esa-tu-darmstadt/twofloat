@@ -444,7 +444,7 @@ namespace dd_real {
   template <typename T>
   inline two<T> add(T a, T b) {
     T s, e;
-    s = two_sum(a, b, e);
+    s = qd::two_sum(a, b, e);
     return two<T> (s, e);
   }
 
@@ -665,7 +665,8 @@ two<T> sqrt(const two<T> &input) {
 
   // if (input.is_negative()) {
   if (input.h < zeropointzero) {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    // TODO: replace assert with message printing
+ //   static_assert(sizeof(T) == 0, "LSV: other types not supported");
     return two<T>{local_nan, local_nan};
   }
 
