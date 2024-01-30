@@ -417,7 +417,38 @@ namespace qd {
     return q;
   }
 
+  // Reference QD / inline.h
+  // TODO: make sure this has not been already implemented
+  template <typename T>
+  inline T two_sum(T a, T b, T &err) {
+    T s = a + b;
+    T bb = s - a;
+    err = (a - (s - bb)) - (b - bb);
+    return s;
+  }
+
 } // End namespace qd
+
+namespace dd_real {
+
+  // Reference: QD / dd_inline.h
+  template <typename T>
+  inline two<T> sqr(T input) {
+    T p1, p2;
+    p1 = qd::two_sqr(input, p2);
+    return two<T>{p1, p2};
+  }
+
+  // Reference: QD / dd_inline.h
+  // TODO: make sure this has not been already implemented
+  template <typename T>
+  inline two<T> add(T a, T b) {
+    T s, e;
+    s = two_sum(a, b, e);
+    return two<T> (s, e);
+  }
+
+} // End namespace dd_real
 
 // Reference: QD / dd_inline.h
 /* Round to nearest integer */
@@ -465,9 +496,6 @@ template <typename T>
 inline T to_double(const two<T> &input) {
   return input.h;
 }
-
-
-
 
 // Reference: QD / dd_inline.h
 template <typename T>
@@ -599,24 +627,6 @@ static two<T> cos_taylor(const two<T> &input) {
   return s;
 }
 
-// Reference QD / inline.h
-// TODO: make sure this has not been already implemented
-template <typename T>
-inline T two_sum(T a, T b, T &err) {
-  T s = a + b;
-  T bb = s - a;
-  err = (a - (s - bb)) - (b - bb);
-  return s;
-}
-
-// Reference: QD / dd_inline.h
-template <typename T>
-inline two<T> dd_add(T a, T b) {
-  T s, e;
-  s = two_sum(a, b, e);
-  return two<T> (s, e);
-}
-
 // Reference: QD / dd_real.cpp
 /* Computes the square root of the double-double number dd.
    NOTE: dd must be a non-negative number. */
@@ -661,8 +671,8 @@ two<T> sqrt(const two<T> &input) {
 
   T x = onepointzero / std::sqrt(input.h);
   T ax = input.h * x;
-  two<T> temp = sub(input, sqr(ax));
-  return dd_add(ax, temp.h * x * pointfive);
+  two<T> temp = sub<doubleword::Mode::Accurate>(input, dd_real::sqr(ax));
+  return dd_real::add(ax, temp.h * x * pointfive);
 }
 
 // Reference: QD / dd_real.cpp
