@@ -817,16 +817,17 @@ inline two<T> sin(const two<T> &input) {
       two<T> neg_temp = two<T>{-temp.h, -temp.l};
       r = sub<doubleword::Mode::Accurate>(neg_temp, mul<doubleword::Mode::Accurate, true>(v, sin_t));
     }
-  } /*else {
+  } else {
     if (k > 0) {
-      r = sub(-mul(u, sin_t), mul(v, cos_t));
+      two<T> temp = mul<doubleword::Mode::Accurate, true>(u, sin_t);
+      two<T> neg_temp = two<T>{-temp.h, -temp.l};
+      r = sub<doubleword::Mode::Accurate>(neg_temp, mul<doubleword::Mode::Accurate, true>(v, cos_t));
     } else {
-      r = sub(mul(v, cos_t), mul(u, sin_t));
+      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(v, cos_t), mul<doubleword::Mode::Accurate, true>(u, sin_t));
     }
   }
 
   return r;
-*/
 }
 }  // namespace doubleword
 }  // namespace twofloat
