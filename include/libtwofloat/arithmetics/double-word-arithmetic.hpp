@@ -546,8 +546,6 @@ static two<T> sin_taylor(const two<T> &input) {
 
   two<T> r, s, t, x;
 
-  // TODO: make sure this is already supported in twofloat
-  //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     T hi, lo;
     qd::split(zeropointzero, hi, lo);
@@ -604,11 +602,9 @@ static two<T> cos_taylor(const two<T> &input) {
 
   two<T> r, s, t, x;
 
-  // TODO: make sure this is already supported in twofloat
-  //if (input.is_zero()) {
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    qd::split(zeropointzero, hi, lo);
+    qd::split(onepointzero, hi, lo);
     return two<T>{hi, lo};
   }
 
