@@ -714,9 +714,6 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_2pi;
   two<T> local_pi2;
   two<T> local_pi16;
-/*
-  T pointfive, local_pi16;
-*/
   const T* local_ptr_cos_table;
   const T* local_ptr_sin_table;
 
