@@ -255,12 +255,16 @@ TEST(DoubleWordArithmetic, DivFPTest) { divFPTest<false>(); }
 
 TEST(DoubleWordArithmetic, DivFPFMATest) { divFPTest<true>(); }
 
-TEST(DoubleWordArithmetic, SinTest) {}
+TEST(DoubleWordArithmetic, SinTest) {
   float x = 10;
   float sinx = std::sin(x);
 
   two<float> two_x = {x, 0.0f};
   two<float> sin_two_x = doubleword::sin(two_x);
+
+  EXPECT_NEAR(sinx, sin_two_x.eval<float>(), sinx * std::numeric_limits<two<float>>::epsilon());
+}
+
 }  // namespace test
 }  // namespace doubleword
 }  // namespace twofloat
