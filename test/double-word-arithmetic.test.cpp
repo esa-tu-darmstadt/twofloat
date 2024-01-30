@@ -266,6 +266,17 @@ TEST(DoubleWordArithmetic, SinTest) {
   EXPECT_NEAR(sinx, sin_two_x.eval<float>(), sinx * std::numeric_limits<two<float>>::epsilon());
 }
 
+TEST(DoubleWordArithmetic, SinTest2) {
+  double x = 10;
+  double sinx = std::sin(x);
+
+  two<double> two_x = {x, 0.0};
+  two<double> sin_two_x = doubleword::sin(two_x);
+
+  // Check the expected and actual values within /build/Testing/Temporary/LastTest.log
+  EXPECT_NEAR(sinx, sin_two_x.eval<double>(), sinx * std::numeric_limits<two<double>>::epsilon());
+}
+
 }  // namespace test
 }  // namespace doubleword
 }  // namespace twofloat
