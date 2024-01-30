@@ -653,13 +653,14 @@ two<T> sqrt(const two<T> &input) {
     return two<T>{zeropointzero, zeropointzero};
   }
 
-  if (input.is_negative()) {
+  // if (input.is_negative()) {
+  if (input.h < zeropointzero) {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
-    return local_nan;
+    return two<T>{local_nan, local_nan};
   }
 
   T x = onepointzero / std::sqrt(input.h);
-  T ax = mul(input.h, x);
+  T ax = input.h * x;
   two<T> temp = sub(input, sqr(ax));
   return dd_add(ax, temp.h * x * pointfive);
 }
