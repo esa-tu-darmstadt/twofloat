@@ -677,14 +677,20 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
     static_assert(sizeof(T) == 0, "LSV: other types not supported");
   }
 
-  if (input.is_zero()) {
-    sin_a = zeropointzero;
-    cos_a = onepointzero;
+  // Reference: QD / dd_inline.h
+  // Assignment is performed according to operator== 
+  // TODO: make sure this is already supported in twofloat
+  //if (input.is_zero()) {
+  if (input.eval() == zeropointzero) {
+    sin_a.h = zeropointzero;
+    sin_a.l = zeropointzero;
+    cos_a.h = onepointzero;
+    cos_a.l = zeropointzero;
     return;
   }
 
   sin_a = sin_taylor(input);
-  cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
+  //cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
 }
 
 // Reference: QD / dd_real.cpp
@@ -774,8 +780,9 @@ inline two<T> sin(const two<T> &input) {
   two<T> v{(local_ptr_sin_table + (abs_k - 1))[0], (local_ptr_sin_table + (abs_k - 1))[1]};
 
   two<T> sin_t, cos_t;
-/*
+
   sincos_taylor(t, sin_t, cos_t);
+/*
   if (j == 0) {
     if (k > 0) {
       r = add(mul(u, sin_t), mul(v, cos_t));
