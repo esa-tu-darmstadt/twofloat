@@ -771,8 +771,8 @@ inline two<T> sin(const two<T> &input) {
   }
 
   two<T> u{(local_ptr_cos_table + (abs_k - 1))[0], (local_ptr_cos_table + (abs_k - 1))[1]};
+  two<T> v{(local_ptr_sin_table + (abs_k - 1))[0], (local_ptr_sin_table + (abs_k - 1))[1]};
 /*
-  two<T> v(local_ptr_sin_table[abs_k - 1][0], local_ptr_sin_table[abs_k - 1][1]);
   two<T> sin_t, cos_t;
   sincos_taylor(t, sin_t, cos_t);
   if (j == 0) {
