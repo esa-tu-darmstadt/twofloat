@@ -803,13 +803,13 @@ inline two<T> sin(const two<T> &input) {
     } else {
       r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, sin_t), mul<doubleword::Mode::Accurate, true>(v, cos_t));
     }
-  } /*else if (j == 1) {
+  } else if (j == 1) {
     if (k > 0) {
-      r = sub(mul(u, cos_t), mul(v, sin_t));
+      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
     } else {
-      r = add(mul(u, cos_t), mul(v, sin_t));
+      r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
     }
-  } else if (j == -1) {
+  } /*else if (j == -1) {
     if (k > 0) {
       r = sub(mul(v, sin_t), mul(u, cos_t));
     } else if (k < 0) {
