@@ -487,7 +487,7 @@ inline two<T> nint(const two<T> &input) {
     }
   }
 
-  return two<float>{hi, lo};
+  return two<T>{hi, lo};
 }
 
 // Reference: QD / dd_inline.h
