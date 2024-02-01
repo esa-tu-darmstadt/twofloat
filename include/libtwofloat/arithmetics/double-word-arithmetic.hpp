@@ -833,6 +833,10 @@ inline two<T> sin(const two<T> &input) {
     }
   }
 
+  std::cout << "LSV starts ..." << std::endl;
+  std::cout << "r = " << r.eval() << std::endl;
+  std::cout << "... LSV ends" << std::endl;
+
   return r;
 }
 }  // namespace doubleword
