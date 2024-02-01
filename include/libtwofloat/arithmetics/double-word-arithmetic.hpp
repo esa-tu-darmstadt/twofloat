@@ -338,7 +338,7 @@ namespace qd {
     } else if constexpr (std::is_same_v<T, double>) {
       pointfive = 0.5;
     } else {
-      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+      std::cerr << "Other types not supported\n";
     }
 
     if(input = std::floor(input)) {
@@ -379,7 +379,7 @@ namespace qd {
       local_split_factor = fp64_split_factor;
       local_split_factor_2 = fp64_split_factor_2;
     } else {
-      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+      std::cerr << "Other types not supported\n";
     }
 
     if(input > local_qd_split_thresh || input < -local_qd_split_thresh) {
@@ -407,7 +407,7 @@ namespace qd {
     } else if constexpr (std::is_same_v<T, double>) {
       twopointzero = 2.0;
     } else {
-      static_assert(sizeof(T) == 0, "LSV: other types not supported");
+      std::cerr << "Other types not supported\n";
     }
 
     T hi, lo;
@@ -467,7 +467,7 @@ inline two<T> nint(const two<T> &input) {
     pointfive = 0.5;
     onepointzero = 1.0;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   if(hi == input.h) {
@@ -507,7 +507,7 @@ inline two<T> sqr(const two<T> &input) {
   } else if constexpr (std::is_same_v<T, double>) {
     twopointzero = 2.0;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   T p1, p2;
@@ -539,7 +539,7 @@ static two<T> sin_taylor(const two<T> &input) {
     local_ptr_inv_fact = &fp64_inv_fact[0][0];
     zeropointzero = 0.0;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
@@ -595,7 +595,7 @@ static two<T> cos_taylor(const two<T> &input) {
     local_ptr_inv_fact = &fp64_inv_fact[0][0];
     zeropointzero = 0.0;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   const T thresh = pointfive * local_eps;
@@ -650,7 +650,7 @@ two<T> sqrt(const two<T> &input) {
     pointfive = 0.5;
     local_nan = fp64_nan;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   if (input.eval() == zeropointzero) {
@@ -661,8 +661,7 @@ two<T> sqrt(const two<T> &input) {
 
   // if (input.is_negative()) {
   if (input.h < zeropointzero) {
-    // TODO: replace assert with message printing
- //   static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Negative argument.\n";
     return two<T>{local_nan, local_nan};
   }
 
@@ -684,7 +683,7 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
     zeropointzero = 0.0;
     onepointzero = 1.0;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   // Reference: QD / dd_inline.h
@@ -731,7 +730,7 @@ inline two<T> sin(const two<T> &input) {
     pointfive  = 0.5;
     local_nan  = fp64_nan;
   } else {
-    static_assert(sizeof(T) == 0, "LSV: other types not supported");
+    std::cerr << "Other types not supported\n";
   }
 
   if (input.eval() == zeropointzero) {
@@ -770,12 +769,12 @@ inline two<T> sin(const two<T> &input) {
   std::cout << "... LSV ends" << std::endl;
 
   if (j < -2 || j > 2) {
-//    std::error("LSV: cannot reduce modulo pi/2");
+    std::cerr << "ERROR: cannot reduce modulo pi/2\n";
     return two<T>{local_nan, local_nan};
   }
 
   if (abs_k > 4) {
-//    std::error("LSV: cannot reduce modulo pi/16");
+    std::cerr << "ERROR: cannot reduce modulo pi/16\n";
     return two<T>{local_nan, local_nan};
   }
 
