@@ -6,6 +6,7 @@
 #include <libtwofloat/constants.hpp>
 #include <limits>
 #include <type_traits>
+#include <iostream>
 
 /// \brief A namespace for algorithms that operate on pairs of floating point
 namespace twofloat {

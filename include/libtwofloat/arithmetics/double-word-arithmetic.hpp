@@ -744,6 +744,12 @@ inline two<T> sin(const two<T> &input) {
   two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
   two<T> r = sub<doubleword::Mode::Accurate>(input, mul<doubleword::Mode::Accurate, true>(local_2pi, z));
 
+  std::cout << "LSV starts ..." << std::endl;
+  std::cout << "input = " << input.eval() << std::endl;
+  std::cout << "z = " << z.eval() << std::endl;
+  std::cout << "r = " << r.eval() << std::endl;
+  std::cout << "... LSV ends" << std::endl;
+
   // Approximately reducing modulo pi/2 and then modulo pi/16
 
   //TODO: original type is double, here it is templated

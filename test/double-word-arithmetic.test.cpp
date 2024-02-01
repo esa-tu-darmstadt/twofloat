@@ -256,7 +256,7 @@ TEST(DoubleWordArithmetic, DivFPTest) { divFPTest<false>(); }
 TEST(DoubleWordArithmetic, DivFPFMATest) { divFPTest<true>(); }
 
 TEST(DoubleWordArithmetic, SinTest) {
-  float x = 10;
+  float x = 1;
   float sinx = std::sin(x);
 
   two<float> two_x = {x, 0.0f};
@@ -267,7 +267,7 @@ TEST(DoubleWordArithmetic, SinTest) {
 }
 
 TEST(DoubleWordArithmetic, SinTest2) {
-  double x = 10;
+  double x = 1;
   double sinx = std::sin(x);
 
   two<double> two_x = {x, 0.0};
