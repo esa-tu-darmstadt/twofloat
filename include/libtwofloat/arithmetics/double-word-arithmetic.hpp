@@ -814,6 +814,13 @@ inline two<T> sin(const two<T> &input) {
       r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
     } else {
       r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
+      std::cout << "LSV starts ..." << std::endl;
+      std::cout << "u = " << u.eval() << std::endl;
+      std::cout << "cos_t = " << cos_t.eval() << std::endl;
+      std::cout << "v = " << v.eval() << std::endl;
+      std::cout << "sin_t = " << sin_t.eval() << std::endl;
+      std::cout << "r = " << r.eval() << std::endl;
+      std::cout << "... LSV ends" << std::endl;
     }
   } else if (j == -1) {
     if (k > 0) {
