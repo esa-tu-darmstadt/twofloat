@@ -798,6 +798,11 @@ inline two<T> sin(const two<T> &input) {
 
   sincos_taylor(t, sin_t, cos_t);
 
+  std::cout << "LSV starts ..." << std::endl;
+  std::cout << "sin_t = " << sin_t.eval() << std::endl;
+  std::cout << "cos_t = " << cos_t.eval() << std::endl;
+  std::cout << "... LSV ends" << std::endl;
+
   if (j == 0) {
     if (k > 0) {
       r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, sin_t), mul<doubleword::Mode::Accurate, true>(v, cos_t));
