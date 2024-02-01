@@ -761,6 +761,14 @@ inline two<T> sin(const two<T> &input) {
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
 
+  std::cout << "LSV starts ..." << std::endl;
+  std::cout << "t = " << t.eval() << std::endl;
+  std::cout << "q = " << q << std::endl;
+  std::cout << "j = " << j << std::endl;
+  std::cout << "k = " << k << std::endl;
+  std::cout << "abs_k = " << abs_k << std::endl;
+  std::cout << "... LSV ends" << std::endl;
+
   if (j < -2 || j > 2) {
 //    std::error("LSV: cannot reduce modulo pi/2");
     return two<T>{local_nan, local_nan};
