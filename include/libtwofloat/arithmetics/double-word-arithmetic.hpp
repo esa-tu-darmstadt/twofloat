@@ -791,8 +791,10 @@ inline two<T> sin(const two<T> &input) {
     }
   }
 
-  two<T> u{(local_ptr_cos_table + (abs_k - 1))[0], (local_ptr_cos_table + (abs_k - 1))[1]};
-  two<T> v{(local_ptr_sin_table + (abs_k - 1))[0], (local_ptr_sin_table + (abs_k - 1))[1]};
+  // IMPORTANT: notice the factor 2 when accessing the cos() and sin() look-up tables
+  // This factor is required to access data correctly as done in QD
+  two<T> u{(local_ptr_cos_table + 2 * (abs_k - 1))[0], (local_ptr_cos_table + 2 * (abs_k - 1))[1]};
+  two<T> v{(local_ptr_sin_table + 2 * (abs_k - 1))[0], (local_ptr_sin_table + 2 * (abs_k - 1))[1]};
 
   two<T> sin_t, cos_t;
 
