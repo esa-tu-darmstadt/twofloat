@@ -743,11 +743,13 @@ inline two<T> sin(const two<T> &input) {
   two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
   two<T> r = sub<doubleword::Mode::Accurate>(input, mul<doubleword::Mode::Accurate, true>(local_2pi, z));
 
+  /*
   std::cout << "LSV starts ..." << std::endl;
   std::cout << "input = " << input.eval() << std::endl;
   std::cout << "z = " << z.eval() << std::endl;
   std::cout << "r = " << r.eval() << std::endl;
   std::cout << "... LSV ends" << std::endl;
+  */
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
 
@@ -760,6 +762,7 @@ inline two<T> sin(const two<T> &input) {
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
 
+  /*
   std::cout << "LSV starts ..." << std::endl;
   std::cout << "t = " << t.eval() << std::endl;
   std::cout << "q = " << q << std::endl;
@@ -767,6 +770,7 @@ inline two<T> sin(const two<T> &input) {
   std::cout << "k = " << k << std::endl;
   std::cout << "abs_k = " << abs_k << std::endl;
   std::cout << "... LSV ends" << std::endl;
+  */
 
   if (j < -2 || j > 2) {
     std::cerr << "ERROR: cannot reduce modulo pi/2\n";
@@ -800,10 +804,12 @@ inline two<T> sin(const two<T> &input) {
 
   sincos_taylor(t, sin_t, cos_t);
 
+  /*
   std::cout << "LSV starts ..." << std::endl;
   std::cout << "sin_t = " << sin_t.eval() << std::endl;
   std::cout << "cos_t = " << cos_t.eval() << std::endl;
   std::cout << "... LSV ends" << std::endl;
+  */
 
   if (j == 0) {
     if (k > 0) {
@@ -816,6 +822,7 @@ inline two<T> sin(const two<T> &input) {
       r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
     } else {
       r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
+      /*
       std::cout << "LSV starts ..." << std::endl;
       std::cout << "u = " << u.eval() << std::endl;
       std::cout << "cos_t = " << cos_t.eval() << std::endl;
@@ -823,6 +830,7 @@ inline two<T> sin(const two<T> &input) {
       std::cout << "sin_t = " << sin_t.eval() << std::endl;
       std::cout << "r = " << r.eval() << std::endl;
       std::cout << "... LSV ends" << std::endl;
+      */
     }
   } else if (j == -1) {
     if (k > 0) {
@@ -841,11 +849,11 @@ inline two<T> sin(const two<T> &input) {
       r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(v, cos_t), mul<doubleword::Mode::Accurate, true>(u, sin_t));
     }
   }
-
+  /*
   std::cout << "LSV starts ..." << std::endl;
   std::cout << "r = " << r.eval() << std::endl;
   std::cout << "... LSV ends" << std::endl;
-
+  */
   return r;
 }
 }  // namespace doubleword
