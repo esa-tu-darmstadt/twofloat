@@ -402,7 +402,10 @@ namespace qd {
 
     T hi, lo;
     T q = input * input;
-    qd::split(input, hi, lo);
+    //qd::split(input, hi, lo);
+    two<T> temp = twofloat::algorithms::Split(input);
+    hi = temp.h;
+    lo = temp.l;
     err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
     return q;
   }
@@ -544,7 +547,10 @@ static two<T> sin_taylor(const two<T> &input) {
 
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    qd::split(zeropointzero, hi, lo);
+    //qd::split(zeropointzero, hi, lo);
+    two<T> temp = twofloat::algorithms::Split(zeropointzero);
+    hi = temp.h;
+    lo = temp.l;
     return two<T>{hi, lo};
   }
 
@@ -600,7 +606,10 @@ static two<T> cos_taylor(const two<T> &input) {
 
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    qd::split(onepointzero, hi, lo);
+    //qd::split(onepointzero, hi, lo);
+    two<T> temp = twofloat::algorithms::Split(onepointzero);
+    hi = temp.h;
+    lo = temp.l;
     return two<T>{hi, lo};
   }
 
@@ -651,7 +660,10 @@ two<T> sqrt(const two<T> &input) {
 
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    qd::split(zeropointzero, hi, lo);
+    //qd::split(zeropointzero, hi, lo);
+    two<T> temp = twofloat::algorithms::Split(zeropointzero);
+    hi = temp.h;
+    lo = temp.l;
     return two<T>{hi, lo};
   }
 
@@ -731,7 +743,10 @@ inline two<T> sin(const two<T> &input) {
 
   if (input.eval() == zeropointzero) {
     T hi, lo;
-    qd::split(zeropointzero, hi, lo);
+    //qd::split(zeropointzero, hi, lo);
+    two<T> temp = twofloat::algorithms::Split(zeropointzero);
+    hi = temp.h;
+    lo = temp.l;
     return two<T>{hi, lo};
   }
 
