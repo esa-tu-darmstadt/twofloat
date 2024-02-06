@@ -501,12 +501,15 @@ static two<T> sin_taylor(const two<T> &input) {
   two<T> r, s, t, x;
 
   if (input.eval() == zeropointzero) {
+  /*
     T hi, lo;
     //qd::split(zeropointzero, hi, lo);
     two<T> temp = twofloat::algorithms::Split(zeropointzero);
     hi = temp.h;
     lo = temp.l;
     return two<T>{hi, lo};
+  */
+    return two<T>{zeropointzero, zeropointzero};
   }
 
   int i = 0;
@@ -561,12 +564,15 @@ static two<T> cos_taylor(const two<T> &input) {
   two<T> r, s, t, x;
 
   if (input.eval() == zeropointzero) {
+  /*
     T hi, lo;
     //qd::split(onepointzero, hi, lo);
     two<T> temp = twofloat::algorithms::Split(onepointzero);
     hi = temp.h;
     lo = temp.l;
     return two<T>{hi, lo};
+  */
+    return two<T>{onepointzero, zeropointzero};
   }
 
   two<T> temp = sqr(input);
@@ -616,12 +622,15 @@ two<T> sqrt(const two<T> &input) {
   }
 
   if (input.eval() == zeropointzero) {
+  /*
     T hi, lo;
     //qd::split(zeropointzero, hi, lo);
     two<T> temp = twofloat::algorithms::Split(zeropointzero);
     hi = temp.h;
     lo = temp.l;
     return two<T>{hi, lo};
+  */
+    return two<T>{zeropointzero, zeropointzero};
   }
 
   // ERROR: Negative argument
@@ -699,12 +708,15 @@ inline two<T> sin(const two<T> &input) {
   }
 
   if (input.eval() == zeropointzero) {
+  /*
     T hi, lo;
     //qd::split(zeropointzero, hi, lo);
     two<T> temp = twofloat::algorithms::Split(zeropointzero);
     hi = temp.h;
     lo = temp.l;
     return two<T>{hi, lo};
+  */
+    return two<T>{zeropointzero, zeropointzero};
   }
 
   // Approximately reducing modulo 2*pi
