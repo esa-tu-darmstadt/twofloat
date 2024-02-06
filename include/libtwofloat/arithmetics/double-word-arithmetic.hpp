@@ -347,16 +347,6 @@ namespace qd {
     return std::floor(input + pointfive);
   }
 
-  // TODO: already implemented in twofloat?
-  // Reference: QD / inline.h
-  /* Computes fl(a+b) and err(a+b). Assumes |a| >= |b|. */
-  template <typename T>
-  inline T quick_two_sum(T a, T b, T &err) {
-    T s = a + b;
-    err = b - (s - a);
-    return s;
-  }
-
   // TODO: make sure it has not been already implemented in twofloat
   // Reference: QD / inline.h
   /* Computes high word and low word of input */
