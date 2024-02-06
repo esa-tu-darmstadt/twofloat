@@ -448,13 +448,6 @@ inline two<T> nint(const two<T> &input) {
 }
 
 // Reference: QD / dd_inline.h
-/* Cast to double. */
-template <typename T>
-inline T to_double(const two<T> &input) {
-  return input.h;
-}
-
-// Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
 
@@ -502,7 +495,8 @@ static two<T> sin_taylor(const two<T> &input) {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
-  const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
+  //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
+  const T thresh = pointfive * std::abs(input.eval()) * local_eps;
 
   two<T> r, s, t, x;
 
@@ -526,7 +520,8 @@ static two<T> sin_taylor(const two<T> &input) {
     t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
     s = add<doubleword::Mode::Accurate>(s, t);
     i += 2;
-  } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+  //} while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+  } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
 
   return s;
 }
@@ -584,7 +579,8 @@ static two<T> cos_taylor(const two<T> &input) {
     t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
     s = add<doubleword::Mode::Accurate>(s, t);
     i += 2;
-  } while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+  //} while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
+  } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
 
   return s;
 }
