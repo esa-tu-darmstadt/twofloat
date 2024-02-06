@@ -347,45 +347,6 @@ namespace qd {
     return std::floor(input + pointfive);
   }
 
-  // TODO: make sure it has not been already implemented in twofloat
-  // Reference: QD / inline.h
-  /* Computes high word and low word of input */
-  template <typename T>
-  inline void split(T input, T &hi, T &lo) {
-    T temp;
-
-    T local_qd_splitter;
-    T local_qd_split_thresh;
-    T local_split_factor;
-    T local_split_factor_2;
-    if constexpr (std::is_same_v<T, float>) {
-      local_qd_splitter = fp32_qd_splitter;
-      local_qd_split_thresh = fp32_qd_split_thresh;
-      local_split_factor = fp32_split_factor;
-      local_split_factor_2 = fp32_split_factor_2;
-    } else if constexpr (std::is_same_v<T, double>) {
-      local_qd_splitter = fp64_qd_splitter;
-      local_qd_split_thresh = fp64_qd_split_thresh;
-      local_split_factor = fp64_split_factor;
-      local_split_factor_2 = fp64_split_factor_2;
-    } else {
-      static_assert(sizeof(T) == 0, "Other types not supported");
-    }
-
-    if(input > local_qd_split_thresh || input < -local_qd_split_thresh) {
-      input *= local_split_factor;
-      temp = local_qd_splitter * input;
-      hi = temp - (temp - input);
-      lo = input - hi;
-      hi *= local_split_factor_2;
-      lo *= local_split_factor_2;
-    } else {
-      temp = local_qd_splitter * input;
-      hi = temp - (temp - input);
-      lo = input - hi;
-    }
-  }
-
   // Reference: QD / inline.h
   /* Computes fl(input * input) and err(input * input) */
   template <typename T>
