@@ -659,9 +659,9 @@ two<T> sqrt(const two<T> &input) {
     return two<T>{hi, lo};
   }
 
-  // if (input.is_negative()) {
+  // ERROR: Negative argument
+  // if (input.is_negative())
   if (input.h < zeropointzero) {
-    std::cerr << "Negative argument.\n";
     return two<T>{local_nan, local_nan};
   }
 
@@ -772,13 +772,13 @@ inline two<T> sin(const two<T> &input) {
   std::cout << "... LSV ends" << std::endl;
   */
 
+  // ERROR: cannot reduce modulo pi/2\n
   if (j < -2 || j > 2) {
-    std::cerr << "ERROR: cannot reduce modulo pi/2\n";
     return two<T>{local_nan, local_nan};
   }
 
+  // ERROR: cannot reduce modulo pi/16
   if (abs_k > 4) {
-    std::cerr << "ERROR: cannot reduce modulo pi/16\n";
     return two<T>{local_nan, local_nan};
   }
 
