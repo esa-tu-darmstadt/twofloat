@@ -475,7 +475,10 @@ inline two<T> nint(const two<T> &input) {
     lo = qd::nint(input.l);
 
     /* Renormalize. This is needed if h = some integer, l = 1/2. */
-    hi = qd::quick_two_sum(hi, lo, lo);
+    //hi = qd::quick_two_sum(hi, lo, lo);
+    two<T> temp = twofloat::algorithms::FastTwoSum(hi, lo);
+    hi = temp.h;
+    lo = temp.l;
   }
   else {
     /* High word is not an integer */
@@ -515,7 +518,10 @@ inline two<T> sqr(const two<T> &input) {
   p1 = qd::two_sqr(input.h, p2);
   p2 += twopointzero * input.h * input.l;
   p2 += input.l * input.l;
-  s1 = qd::quick_two_sum(p1, p2, s2);
+  //s1 = qd::quick_two_sum(p1, p2, s2);
+  two<T> temp = twofloat::algorithms::FastTwoSum(p1, p2);
+  s1 = temp.h;
+  s2 = temp.l;
   return two<T>{s1, s2};
 }
 
