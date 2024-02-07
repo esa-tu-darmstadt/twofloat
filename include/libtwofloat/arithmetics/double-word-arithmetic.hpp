@@ -303,7 +303,7 @@ struct constants_trig_tables {
   };
 };
 
-// Reference: QD / inline.h
+// Reference: QD / inline.h (within qd namespace)
 /* Computes fl(input * input) and err(input * input) */
 template <typename T>
 inline T two_sqr(T input, T &err) {
@@ -319,7 +319,7 @@ inline T two_sqr(T input, T &err) {
   return q;
 }
 
-// Reference QD / inline.h
+// Reference QD / inline.h (within qd namespace)
 // TODO: make sure this has not been already implemented
 template <typename T>
 inline T two_sum(T a, T b, T &err) {
@@ -350,7 +350,7 @@ namespace dd_real {
 
 } // End namespace dd_real
 
-// Reference: QD / inline.h
+// Reference: QD / inline.h (within qd namespace)
 /* Computes the nearest integer to input. */
 template <typename T>
 inline T nint(T input) {
