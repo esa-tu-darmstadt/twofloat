@@ -250,6 +250,10 @@ static const constexpr T _nan = std::numeric_limits<T>::quiet_NaN();
 template <typename T>
 static const constexpr T _eps = 4.93038065763132e-32;  // 2^-104
 
+// Some recurrently-used contants
+template <typename T>
+static const constexpr T pointfive = 0.5;
+
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
 
@@ -297,20 +301,12 @@ namespace qd {
   /* Computes the nearest integer to input. */
   template <typename T>
   inline T nint(T input) {
-    T pointfive;
-
-    if constexpr (std::is_same_v<T, float>) {
-      pointfive = 0.5f;
-    } else if constexpr (std::is_same_v<T, double>) {
-      pointfive = 0.5;
-    } else {
-      static_assert(sizeof(T) == 0, "Other types not supported");
-    }
+    static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
     if(input = std::floor(input)) {
       return input;
     }
-    return std::floor(input + pointfive);
+    return std::floor(input + pointfive<T>);
   }
 
   // Reference: QD / inline.h
@@ -377,14 +373,12 @@ inline two<T> nint(const two<T> &input) {
   T hi = qd::nint(input.h);
   T lo;
 
-  T zeropointzero, pointfive, onepointzero;
+  T zeropointzero, onepointzero;
   if constexpr (std::is_same_v<T, float>) {
     zeropointzero = 0.0f;
-    pointfive = 0.5f;
     onepointzero = 1.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     zeropointzero = 0.0;
-    pointfive = 0.5;
     onepointzero = 1.0;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
@@ -403,7 +397,7 @@ inline two<T> nint(const two<T> &input) {
   else {
     /* High word is not an integer */
     lo = zeropointzero;
-    if(std::abs(hi - input.h) == pointfive && input.l < zeropointzero) {
+    if(std::abs(hi - input.h) == pointfive<T> && input.l < zeropointzero) {
       /* There is a tie in the high word, consult the low word
          to break the tie. */
       hi -= onepointzero; /* NOTE: This does not cause INEXACT. */
@@ -444,12 +438,10 @@ inline two<T> sqr(const two<T> &input) {
 template<typename T>
 static two<T> sin_taylor(const two<T> &input) {
 
-  T pointfive, zeropointzero;
+  T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
-    pointfive = 0.5f;
     zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
-    pointfive = 0.5;
     zeropointzero = 0.0;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
@@ -459,7 +451,7 @@ static two<T> sin_taylor(const two<T> &input) {
   T local_eps = _eps<T>;
 
   //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
-  const T thresh = pointfive * std::abs(input.eval()) * local_eps;
+  const T thresh = pointfive<T> * std::abs(input.eval()) * local_eps;
 
   two<T> r, s, t, x;
 
@@ -495,13 +487,11 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
-  T pointfive, onepointzero, zeropointzero;
+  T onepointzero, zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
-    pointfive = 0.5f;
     onepointzero = 1.0f;
     zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
-    pointfive = 0.5;
     onepointzero = 1.0;
     zeropointzero = 0.0;
   } else {
@@ -511,7 +501,7 @@ static two<T> cos_taylor(const two<T> &input) {
   const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
 
-  const T thresh = pointfive * local_eps;
+  const T thresh = pointfive<T> * local_eps;
 
   two<T> r, s, t, x;
 
@@ -522,7 +512,7 @@ static two<T> cos_taylor(const two<T> &input) {
   two<T> temp = sqr(input);
   x = two<T>{-temp.h, -temp.l};
   r = x;
-  s = add(onepointzero, mul_pwr2(r, pointfive));
+  s = add(onepointzero, mul_pwr2(r, pointfive<T>));
   int i = 1;
   do {
     r = mul<doubleword::Mode::Accurate, true>(r, x);
@@ -550,15 +540,13 @@ two<T> sqrt(const two<T> &input) {
      only half the precision.
   */
 
-  T zeropointzero, onepointzero, pointfive;
+  T zeropointzero, onepointzero;
   if constexpr (std::is_same_v<T, float>) {
     onepointzero = 1.0f;
     zeropointzero = 0.0f;
-    pointfive = 0.5f;
   } else if constexpr (std::is_same_v<T, double>) {
     onepointzero = 1.0;
     zeropointzero = 0.0;
-    pointfive = 0.5;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
@@ -578,7 +566,7 @@ two<T> sqrt(const two<T> &input) {
   T x = onepointzero / std::sqrt(input.h);
   T ax = input.h * x;
   two<T> temp = sub<doubleword::Mode::Accurate>(input, dd_real::sqr(ax));
-  return dd_real::add(ax, temp.h * x * pointfive);
+  return dd_real::add(ax, temp.h * x * pointfive<T>);
 }
 
 // Reference: QD / dd_real.cpp
@@ -614,13 +602,11 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 template <typename T>
 inline two<T> sin(const two<T> &input) {
 
-  T zeropointzero, pointfive;
+  T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     zeropointzero = 0.0f;
-    pointfive  = 0.5f;
   } else if constexpr (std::is_same_v<T, double>) {
     zeropointzero = 0.0;
-    pointfive  = 0.5;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
@@ -652,10 +638,10 @@ inline two<T> sin(const two<T> &input) {
   // Approximately reducing modulo pi/2 and then modulo pi/16
 
   //TODO: original type is double, here it is templated
-  T q = std::floor(r.h / local_pi2.h + pointfive);
+  T q = std::floor(r.h / local_pi2.h + pointfive<T>);
   two<T> t = sub<doubleword::Mode::Accurate>(r, mul<doubleword::Mode::Accurate, true>(local_pi2, q));
   int j = static_cast<int>(q);
-  q = std::floor(t.h / local_pi16.h + pointfive);
+  q = std::floor(t.h / local_pi16.h + pointfive<T>);
   t = sub<doubleword::Mode::Accurate>(t, mul<doubleword::Mode::Accurate, true>(local_pi16, q));
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
