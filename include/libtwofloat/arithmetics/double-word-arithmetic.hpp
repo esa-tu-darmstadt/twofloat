@@ -403,7 +403,7 @@ inline two<T> sqr(const two<T> &input) {
 // Reference: QD / dd_real.cpp
 /* Computes sin(a) using Taylor series.
    Assumes |a| <= pi/32 */
-template<typename T>
+template <Mode p, bool useFMA, typename T>
 static two<T> sin_taylor(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
@@ -423,9 +423,9 @@ static two<T> sin_taylor(const two<T> &input) {
   r = input;
 
   do {
-    r = mul<doubleword::Mode::Accurate, true>(r, x);
-    t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
-    s = add<doubleword::Mode::Accurate>(s, t);
+    r = mul<p, useFMA>(r, x);
+    t = mul<p, useFMA>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
+    s = add<p>(s, t);
     i += 2;
   //} while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
   } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
@@ -441,7 +441,7 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 }
 
 // Reference: QD / dd_real.cpp
-template<typename T>
+template <Mode p, bool useFMA, typename T>
 static two<T> cos_taylor(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
@@ -460,9 +460,9 @@ static two<T> cos_taylor(const two<T> &input) {
   s = add(onepointzero<T>, mul_pwr2(r, pointfive<T>));
   int i = 1;
   do {
-    r = mul<doubleword::Mode::Accurate, true>(r, x);
-    t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
-    s = add<doubleword::Mode::Accurate>(s, t);
+    r = mul<p, useFMA>(r, x);
+    t = mul<p, useFMA>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
+    s = add<p>(s, t);
     i += 2;
   } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
 
@@ -472,7 +472,7 @@ static two<T> cos_taylor(const two<T> &input) {
 // Reference: QD / dd_real.cpp
 /* Computes the square root of the double-double number dd.
    NOTE: dd must be a non-negative number. */
-template <typename T>
+template <Mode p, typename T>
 two<T> sqrt(const two<T> &input) {
   /* Strategy:  Use Karp's trick:  if x is an approximation
      to sqrt(a), then
@@ -499,12 +499,12 @@ two<T> sqrt(const two<T> &input) {
 
   T x = onepointzero<T> / std::sqrt(input.h);
   T ax = input.h * x;
-  two<T> temp = sub<doubleword::Mode::Accurate>(input, sqr(ax));
+  two<T> temp = sub<p>(input, sqr(ax));
   return add(ax, temp.h * x * pointfive<T>);
 }
 
 // Reference: QD / dd_real.cpp
-template <typename T>
+template <Mode p, bool useFMA, typename T>
 static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
@@ -517,12 +517,12 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
     return;
   }
 
-  sin_a = sin_taylor(input);
-  cos_a = sqrt(sub(onepointzero<T>, sqr(sin_a)));
+  sin_a = sin_taylor<p, useFMA>(input);
+  cos_a = sqrt<p>(sub(onepointzero<T>, sqr(sin_a)));
 }
 
 // Reference: QD / dd_real.cpp
-template <typename T>
+template <Mode p, bool useFMA, typename T>
 inline two<T> sin(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
@@ -539,8 +539,8 @@ inline two<T> sin(const two<T> &input) {
   }
 
   // Approximately reducing modulo 2*pi
-  two<T> z = nint(div<doubleword::Mode::Accurate, true>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
-  two<T> r = sub<doubleword::Mode::Accurate>(input, mul<doubleword::Mode::Accurate, true>(local_2pi, z));
+  two<T> z = nint(div<p, useFMA>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
+  two<T> r = sub<p>(input, mul<p, useFMA>(local_2pi, z));
 
   /*
   std::cout << "LSV starts ..." << std::endl;
@@ -554,10 +554,10 @@ inline two<T> sin(const two<T> &input) {
 
   //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive<T>);
-  two<T> t = sub<doubleword::Mode::Accurate>(r, mul<doubleword::Mode::Accurate, true>(local_pi2, q));
+  two<T> t = sub<p>(r, mul<p, useFMA>(local_pi2, q));
   int j = static_cast<int>(q);
   q = std::floor(t.h / local_pi16.h + pointfive<T>);
-  t = sub<doubleword::Mode::Accurate>(t, mul<doubleword::Mode::Accurate, true>(local_pi16, q));
+  t = sub<p>(t, mul<p, useFMA>(local_pi16, q));
   int k = static_cast<int>(q);
   int abs_k = std::abs(k);
 
@@ -584,13 +584,13 @@ inline two<T> sin(const two<T> &input) {
   if (k == 0) {
     switch(j) {
       case 0:
-        return sin_taylor(t);
+        return sin_taylor<p, useFMA>(t);
       case 1:
-        return cos_taylor(t);
+        return cos_taylor<p, useFMA>(t);
       case -1:
-        return two<T>{-cos_taylor(t).h, -cos_taylor(t).l}; // Reference: QD / dd_inline.h
+        return two<T>{-cos_taylor<p, useFMA>(t).h, -cos_taylor<p, useFMA>(t).l}; // Reference: QD / dd_inline.h
       default:
-        return two<T>{-sin_taylor(t).h, -sin_taylor(t).l};
+        return two<T>{-sin_taylor<p, useFMA>(t).h, -sin_taylor<p, useFMA>(t).l};
     }
   }
 
@@ -601,7 +601,7 @@ inline two<T> sin(const two<T> &input) {
 
   two<T> sin_t, cos_t;
 
-  sincos_taylor(t, sin_t, cos_t);
+  sincos_taylor<p, useFMA>(t, sin_t, cos_t);
 
   /*
   std::cout << "LSV starts ..." << std::endl;
@@ -612,15 +612,15 @@ inline two<T> sin(const two<T> &input) {
 
   if (j == 0) {
     if (k > 0) {
-      r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, sin_t), mul<doubleword::Mode::Accurate, true>(v, cos_t));
+      r = add<p>(mul<p, useFMA>(u, sin_t), mul<p, useFMA>(v, cos_t));
     } else {
-      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, sin_t), mul<doubleword::Mode::Accurate, true>(v, cos_t));
+      r = sub<p>(mul<p, useFMA>(u, sin_t), mul<p, useFMA>(v, cos_t));
     }
   } else if (j == 1) {
     if (k > 0) {
-      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
+      r = sub<p>(mul<p, useFMA>(u, cos_t), mul<p, useFMA>(v, sin_t));
     } else {
-      r = add<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(u, cos_t), mul<doubleword::Mode::Accurate, true>(v, sin_t));
+      r = add<p>(mul<p, useFMA>(u, cos_t), mul<p, useFMA>(v, sin_t));
       /*
       std::cout << "LSV starts ..." << std::endl;
       std::cout << "u = " << u.eval() << std::endl;
@@ -633,19 +633,19 @@ inline two<T> sin(const two<T> &input) {
     }
   } else if (j == -1) {
     if (k > 0) {
-      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(v, sin_t), mul<doubleword::Mode::Accurate, true>(u, cos_t));
+      r = sub<p>(mul<p, useFMA>(v, sin_t), mul<p, useFMA>(u, cos_t));
     } else if (k < 0) {
-      two<T> temp = mul<doubleword::Mode::Accurate, true>(u, cos_t);
+      two<T> temp = mul<p, useFMA>(u, cos_t);
       two<T> neg_temp = two<T>{-temp.h, -temp.l};
-      r = sub<doubleword::Mode::Accurate>(neg_temp, mul<doubleword::Mode::Accurate, true>(v, sin_t));
+      r = sub<p>(neg_temp, mul<p, useFMA>(v, sin_t));
     }
   } else {
     if (k > 0) {
-      two<T> temp = mul<doubleword::Mode::Accurate, true>(u, sin_t);
+      two<T> temp = mul<p, useFMA>(u, sin_t);
       two<T> neg_temp = two<T>{-temp.h, -temp.l};
-      r = sub<doubleword::Mode::Accurate>(neg_temp, mul<doubleword::Mode::Accurate, true>(v, cos_t));
+      r = sub<p>(neg_temp, mul<p, useFMA>(v, cos_t));
     } else {
-      r = sub<doubleword::Mode::Accurate>(mul<doubleword::Mode::Accurate, true>(v, cos_t), mul<doubleword::Mode::Accurate, true>(u, sin_t));
+      r = sub<p>(mul<p, useFMA>(v, cos_t), mul<p, useFMA>(u, sin_t));
     }
   }
   /*
