@@ -237,17 +237,11 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 // Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
 // TODO: transform this to FP32 (the original code is FP64)
 // TODO: check ranges (i.e., exponents)
-const float fp32_eps = 4.9303806e-32;  // 2^-104
 const float fp32_qd_splitter = 134217729.0f; // = 2^27 + 1
 const float fp32_qd_split_thresh = 6.6969287e+299; // = 2^996 // TODO: check! range is beyond float
 const float fp32_split_factor = 3.7252902e-09; // 2^-28
 const float fp32_split_factor_2 = 268435456.0f; // 2^28
 
-
-
-
-
-const double fp64_eps = 4.93038065763132e-32;  // 2^-104
 const double fp64_qd_splitter = 134217729.0; // = 2^27 + 1
 const double fp64_qd_split_thresh = 6.69692879491417e+299; // = 2^996 // TODO: check! range is beyond double
 const double fp64_split_factor = 3.7252902984619140625e-09; // 2^-28
@@ -264,6 +258,9 @@ static const two<T> _pi16 = {1.963495408493620697e-01, 7.654042494670957545e-18}
 
 template <typename T>
 static const constexpr T _nan = std::numeric_limits<T>::quiet_NaN();
+
+template <typename T>
+static const constexpr T _eps = 4.93038065763132e-32;  // 2^-104
 
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
@@ -461,22 +458,22 @@ inline two<T> sqr(const two<T> &input) {
 template<typename T>
 static two<T> sin_taylor(const two<T> &input) {
 
-  T pointfive, local_eps;
+  T pointfive;
   const T* local_ptr_inv_fact;
   T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
-    local_eps = fp32_eps;
     zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     pointfive = 0.5;
-    local_eps = fp64_eps;
     zeropointzero = 0.0;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
   local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
+
+  T local_eps = _eps<T>;
 
   //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
   const T thresh = pointfive * std::abs(input.eval()) * local_eps;
@@ -515,17 +512,15 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
-  T pointfive, local_eps, onepointzero;
+  T pointfive, onepointzero;
   const T* local_ptr_inv_fact;
   T zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
-    local_eps = fp32_eps;
     onepointzero = 1.0f;
     zeropointzero = 0.0f;
   } else if constexpr (std::is_same_v<T, double>) {
     pointfive = 0.5;
-    local_eps = fp64_eps;
     onepointzero = 1.0;
     zeropointzero = 0.0;
   } else {
@@ -533,6 +528,8 @@ static two<T> cos_taylor(const two<T> &input) {
   }
 
   local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
+
+  T local_eps = _eps<T>;
 
   const T thresh = pointfive * local_eps;
 
