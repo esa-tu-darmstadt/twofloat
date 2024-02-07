@@ -254,6 +254,9 @@ static const constexpr T _eps = 4.93038065763132e-32;  // 2^-104
 template <typename T>
 static const constexpr T pointfive = 0.5;
 
+template <typename T>
+static const constexpr T twopointzero = 2.0;
+
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
 
@@ -313,15 +316,7 @@ namespace qd {
   /* Computes fl(input * input) and err(input * input) */
   template <typename T>
   inline T two_sqr(T input, T &err) {
-
-    T twopointzero;
-    if constexpr (std::is_same_v<T, float>) {
-      twopointzero = 2.0f;
-    } else if constexpr (std::is_same_v<T, double>) {
-      twopointzero = 2.0;
-    } else {
-      static_assert(sizeof(T) == 0, "Other types not supported");
-    }
+    static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
     T hi, lo;
     T q = input * input;
@@ -329,7 +324,7 @@ namespace qd {
     two<T> temp = twofloat::algorithms::Split(input);
     hi = temp.h;
     lo = temp.l;
-    err = ((hi * hi - q) + twopointzero * hi * lo) + lo * lo;
+    err = ((hi * hi - q) + twopointzero<T> * hi * lo) + lo * lo;
     return q;
   }
 
@@ -410,20 +405,12 @@ inline two<T> nint(const two<T> &input) {
 // Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
-
-  T twopointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    twopointzero = 2.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    twopointzero = 2.0;
-  } else {
-    static_assert(sizeof(T) == 0, "Other types not supported");
-  }
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   T p1, p2;
   T s1, s2;
   p1 = qd::two_sqr(input.h, p2);
-  p2 += twopointzero * input.h * input.l;
+  p2 += twopointzero<T> * input.h * input.l;
   p2 += input.l * input.l;
   //s1 = qd::quick_two_sum(p1, p2, s2);
   two<T> temp = twofloat::algorithms::FastTwoSum(p1, p2);
