@@ -237,7 +237,6 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 // Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
 // TODO: transform this to FP32 (the original code is FP64)
 // TODO: check ranges (i.e., exponents)
-const two<float> fp32_pi16 = two<float>(1.9634954e-01, 7.6540424e-18);
 static const float fp32_nan = std::numeric_limits<float>::quiet_NaN();
 const float fp32_eps = 4.9303806e-32;  // 2^-104
 const float fp32_qd_splitter = 134217729.0f; // = 2^27 + 1
@@ -247,7 +246,7 @@ const float fp32_split_factor_2 = 268435456.0f; // 2^28
 
 
 
-const two<double> fp64_pi16 = two<double>(1.963495408493620697e-01, 7.654042494670957545e-18);
+
 static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
 const double fp64_eps = 4.93038065763132e-32;  // 2^-104
 const double fp64_qd_splitter = 134217729.0; // = 2^27 + 1
@@ -260,6 +259,9 @@ static const two<T> _2pi = {6.283185307179586232e+00, 2.449293598294706414e-16};
 
 template <typename T>
 static const two<T> _pi2  = {1.570796326794896558e+00, 6.123233995736766036e-17};
+
+template <typename T>
+static const two<T> _pi16 = {1.963495408493620697e-01, 7.654042494670957545e-18};
 
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
@@ -632,20 +634,15 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 // Reference: QD / dd_real.cpp
 template <typename T>
 inline two<T> sin(const two<T> &input) {
-
-
-  two<T> local_pi16;
   const T* local_ptr_cos_table;
   const T* local_ptr_sin_table;
   T zeropointzero, pointfive, local_nan;
 
   if constexpr (std::is_same_v<T, float>) {
-    local_pi16 = fp32_pi16;
     zeropointzero = 0.0f;
     pointfive  = 0.5f;
     local_nan  = fp32_nan;
   } else if constexpr (std::is_same_v<T, double>) {
-    local_pi16 = fp64_pi16;
     zeropointzero = 0.0;
     pointfive  = 0.5;
     local_nan  = fp64_nan;
@@ -655,6 +652,7 @@ inline two<T> sin(const two<T> &input) {
 
   two<T> local_2pi = _2pi<T>;
   two<T> local_pi2 = _pi2<T>;
+  two<T> local_pi16 = _pi16<T>;
 
   local_ptr_cos_table = &constants_trig<T>::cos_table[0][0];
   local_ptr_sin_table = &constants_trig<T>::sin_table[0][0];
