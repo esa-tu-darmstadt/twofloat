@@ -305,23 +305,6 @@ struct constants_trig_tables {
 
 // Notice the definition of the qd namespace
 namespace qd {
-
-  // Reference: QD / inline.h
-  /* Computes fl(input * input) and err(input * input) */
-  template <typename T>
-  inline T two_sqr(T input, T &err) {
-    static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
-    T hi, lo;
-    T q = input * input;
-    //qd::split(input, hi, lo);
-    two<T> temp = twofloat::algorithms::Split(input);
-    hi = temp.h;
-    lo = temp.l;
-    err = ((hi * hi - q) + twopointzero<T> * hi * lo) + lo * lo;
-    return q;
-  }
-
   // Reference QD / inline.h
   // TODO: make sure this has not been already implemented
   template <typename T>
@@ -334,13 +317,29 @@ namespace qd {
 
 } // End namespace qd
 
+// Reference: QD / inline.h
+/* Computes fl(input * input) and err(input * input) */
+template <typename T>
+inline T two_sqr(T input, T &err) {
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
+
+  T hi, lo;
+  T q = input * input;
+  //qd::split(input, hi, lo);
+  two<T> temp = twofloat::algorithms::Split(input);
+  hi = temp.h;
+  lo = temp.l;
+  err = ((hi * hi - q) + twopointzero<T> * hi * lo) + lo * lo;
+  return q;
+}
+
 namespace dd_real {
 
   // Reference: QD / dd_inline.h
   template <typename T>
   inline two<T> sqr(T input) {
     T p1, p2;
-    p1 = qd::two_sqr(input, p2);
+    p1 = two_sqr(input, p2);
     return two<T>{p1, p2};
   }
 
@@ -405,7 +404,7 @@ inline two<T> sqr(const two<T> &input) {
 
   T p1, p2;
   T s1, s2;
-  p1 = qd::two_sqr(input.h, p2);
+  p1 = two_sqr(input.h, p2);
   p2 += twopointzero<T> * input.h * input.l;
   p2 += input.l * input.l;
   //s1 = qd::quick_two_sum(p1, p2, s2);
