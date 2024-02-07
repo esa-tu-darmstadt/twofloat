@@ -318,7 +318,7 @@ inline T two_sqr(T input, T &err) {
 }
 
 // Reference QD / inline.h (within qd namespace)
-// TODO: make sure this has not been already implemented
+// TODO: make sure this has not been already implemented in twofloat
 template <typename T>
 inline T two_sum(T a, T b, T &err) {
   T s = a + b;
@@ -328,7 +328,7 @@ inline T two_sum(T a, T b, T &err) {
 }
 
 // Reference: QD / dd_inline.h (within dd_real namespace)
-// TODO: make sure this has not been already implemented
+// TODO: make sure this has not been already implemented in twofloat
 template <typename T>
 inline two<T> add(T a, T b) {
   T s, e;
@@ -538,7 +538,7 @@ inline two<T> sin(const two<T> &input) {
   }
 
   // Approximately reducing modulo 2*pi
-  two<T> z = nint(div<p, useFMA>(input, local_2pi)); // TODO: check mode chosen for div (accurate + fma)
+  two<T> z = nint(div<p, useFMA>(input, local_2pi));
   two<T> r = sub<p>(input, mul<p, useFMA>(local_2pi, z));
 
   /*
@@ -550,8 +550,6 @@ inline two<T> sin(const two<T> &input) {
   */
 
   // Approximately reducing modulo pi/2 and then modulo pi/16
-
-  //TODO: original type is double, here it is templated
   T q = std::floor(r.h / local_pi2.h + pointfive<T>);
   two<T> t = sub<p>(r, mul<p, useFMA>(local_pi2, q));
   int j = static_cast<int>(q);
