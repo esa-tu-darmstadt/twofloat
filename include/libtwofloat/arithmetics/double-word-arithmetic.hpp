@@ -308,10 +308,8 @@ struct constants_trig_tables {
 template <typename T>
 inline T two_sqr(T input, T &err) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
   T hi, lo;
   T q = input * input;
-  //qd::split(input, hi, lo);
   two<T> temp = twofloat::algorithms::Split(input);
   hi = temp.h;
   lo = temp.l;
@@ -354,10 +352,8 @@ inline T nint(T input) {
 template <typename T>
 inline two<T> nint(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
   T hi = nint(input.h);
   T lo;
-
   if(hi == input.h) {
     /* High word is an integer already. Round the low word. */
     lo = nint(input.l);
@@ -393,13 +389,11 @@ inline two<T> sqr(T input) {
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
   T p1, p2;
   T s1, s2;
   p1 = two_sqr(input.h, p2);
   p2 += twopointzero<T> * input.h * input.l;
   p2 += input.l * input.l;
-  //s1 = qd::quick_two_sum(p1, p2, s2);
   two<T> temp = twofloat::algorithms::FastTwoSum(p1, p2);
   s1 = temp.h;
   s2 = temp.l;
@@ -415,10 +409,7 @@ static two<T> sin_taylor(const two<T> &input) {
 
   const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
-
-  //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
   const T thresh = pointfive<T> * std::abs(input.eval()) * local_eps;
-
   two<T> r, s, t, x;
 
   if (input.eval() == zeropointzero<T>) {
@@ -452,14 +443,11 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 // Reference: QD / dd_real.cpp
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
-
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
-
   const T thresh = pointfive<T> * local_eps;
-
   two<T> r, s, t, x;
 
   if (input.eval() == zeropointzero<T>) {
@@ -476,7 +464,6 @@ static two<T> cos_taylor(const two<T> &input) {
     t = mul<doubleword::Mode::Accurate, true>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
     s = add<doubleword::Mode::Accurate>(s, t);
     i += 2;
-  //} while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
   } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
 
   return s;
@@ -498,7 +485,6 @@ two<T> sqrt(const two<T> &input) {
   */
 
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
   T local_nan = _nan<T>;
 
   if (input.eval() == zeropointzero<T>) {
@@ -523,7 +509,6 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   // Reference: QD / dd_inline.h
-  // Assignment is performed according to operator== 
   if (input.eval() == zeropointzero<T>) {
     sin_a.h = zeropointzero<T>;
     sin_a.l = zeropointzero<T>;
