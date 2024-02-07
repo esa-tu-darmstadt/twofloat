@@ -307,18 +307,6 @@ struct constants_trig_tables {
 namespace qd {
 
   // Reference: QD / inline.h
-  /* Computes the nearest integer to input. */
-  template <typename T>
-  inline T nint(T input) {
-    static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
-
-    if(input = std::floor(input)) {
-      return input;
-    }
-    return std::floor(input + pointfive<T>);
-  }
-
-  // Reference: QD / inline.h
   /* Computes fl(input * input) and err(input * input) */
   template <typename T>
   inline T two_sqr(T input, T &err) {
@@ -367,18 +355,29 @@ namespace dd_real {
 
 } // End namespace dd_real
 
+// Reference: QD / inline.h
+/* Computes the nearest integer to input. */
+template <typename T>
+inline T nint(T input) {
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
+  if(input = std::floor(input)) {
+    return input;
+  }
+  return std::floor(input + pointfive<T>);
+}
+
 // Reference: QD / dd_inline.h
 /* Round to nearest integer */
 template <typename T>
 inline two<T> nint(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
-  T hi = qd::nint(input.h);
+  T hi = /*qd::*/nint(input.h);
   T lo;
 
   if(hi == input.h) {
     /* High word is an integer already. Round the low word. */
-    lo = qd::nint(input.l);
+    lo = /*qd::*/nint(input.l);
 
     /* Renormalize. This is needed if h = some integer, l = 1/2. */
     //hi = qd::quick_two_sum(hi, lo, lo);
