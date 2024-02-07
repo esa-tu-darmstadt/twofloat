@@ -260,6 +260,9 @@ static const constexpr T twopointzero = 2.0;
 template <typename T>
 static const constexpr T zeropointzero = 0.0;
 
+template <typename T>
+static const constexpr T onepointzero = 1.0;
+
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
 
@@ -368,17 +371,10 @@ namespace dd_real {
 /* Round to nearest integer */
 template <typename T>
 inline two<T> nint(const two<T> &input) {
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
+
   T hi = qd::nint(input.h);
   T lo;
-
-  T onepointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    onepointzero = 1.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    onepointzero = 1.0;
-  } else {
-    static_assert(sizeof(T) == 0, "Other types not supported");
-  }
 
   if(hi == input.h) {
     /* High word is an integer already. Round the low word. */
@@ -396,7 +392,7 @@ inline two<T> nint(const two<T> &input) {
     if(std::abs(hi - input.h) == pointfive<T> && input.l < zeropointzero<T>) {
       /* There is a tie in the high word, consult the low word
          to break the tie. */
-      hi -= onepointzero; /* NOTE: This does not cause INEXACT. */
+      hi -= onepointzero<T>; /* NOTE: This does not cause INEXACT. */
     }
   }
 
@@ -467,14 +463,7 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
-  T onepointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    onepointzero = 1.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    onepointzero = 1.0;
-  } else {
-    static_assert(sizeof(T) == 0, "Other types not supported");
-  }
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
@@ -484,13 +473,13 @@ static two<T> cos_taylor(const two<T> &input) {
   two<T> r, s, t, x;
 
   if (input.eval() == zeropointzero<T>) {
-    return two<T>{onepointzero, zeropointzero<T>};
+    return two<T>{onepointzero<T>, zeropointzero<T>};
   }
 
   two<T> temp = sqr(input);
   x = two<T>{-temp.h, -temp.l};
   r = x;
-  s = add(onepointzero, mul_pwr2(r, pointfive<T>));
+  s = add(onepointzero<T>, mul_pwr2(r, pointfive<T>));
   int i = 1;
   do {
     r = mul<doubleword::Mode::Accurate, true>(r, x);
@@ -518,14 +507,7 @@ two<T> sqrt(const two<T> &input) {
      only half the precision.
   */
 
-  T onepointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    onepointzero = 1.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    onepointzero = 1.0;
-  } else {
-    static_assert(sizeof(T) == 0, "Other types not supported");
-  }
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   T local_nan = _nan<T>;
 
@@ -539,7 +521,7 @@ two<T> sqrt(const two<T> &input) {
     return two<T>{local_nan, local_nan};
   }
 
-  T x = onepointzero / std::sqrt(input.h);
+  T x = onepointzero<T> / std::sqrt(input.h);
   T ax = input.h * x;
   two<T> temp = sub<doubleword::Mode::Accurate>(input, dd_real::sqr(ax));
   return dd_real::add(ax, temp.h * x * pointfive<T>);
@@ -548,28 +530,20 @@ two<T> sqrt(const two<T> &input) {
 // Reference: QD / dd_real.cpp
 template <typename T>
 static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
-
-  T onepointzero;
-  if constexpr (std::is_same_v<T, float>) {
-    onepointzero = 1.0f;
-  } else if constexpr (std::is_same_v<T, double>) {
-    onepointzero = 1.0;
-  } else {
-    static_assert(sizeof(T) == 0, "Other types not supported");
-  }
+  static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
   // Reference: QD / dd_inline.h
   // Assignment is performed according to operator== 
   if (input.eval() == zeropointzero<T>) {
     sin_a.h = zeropointzero<T>;
     sin_a.l = zeropointzero<T>;
-    cos_a.h = onepointzero;
+    cos_a.h = onepointzero<T>;
     cos_a.l = zeropointzero<T>;
     return;
   }
 
   sin_a = sin_taylor(input);
-  cos_a = sqrt(sub(onepointzero, sqr(sin_a)));
+  cos_a = sqrt(sub(onepointzero<T>, sqr(sin_a)));
 }
 
 // Reference: QD / dd_real.cpp
