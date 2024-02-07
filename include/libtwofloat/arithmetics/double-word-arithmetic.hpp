@@ -254,7 +254,7 @@ static const constexpr T _eps = 4.93038065763132e-32;  // 2^-104
 static const int n_inv_fact = 15;
 
 template <typename T>
-struct constants_trig {
+struct constants_trig_tables {
 
   static const constexpr T inv_fact[n_inv_fact][2] = {
     { 1.66666666666666657e-01,  9.25185853854297066e-18},
@@ -455,7 +455,7 @@ static two<T> sin_taylor(const two<T> &input) {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
-  const T* local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
+  const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
 
   //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
@@ -508,7 +508,7 @@ static two<T> cos_taylor(const two<T> &input) {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
-  const T* local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
+  const T* local_ptr_inv_fact = &constants_trig_tables<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
 
   const T thresh = pointfive * local_eps;
@@ -630,8 +630,8 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_pi16 = _pi16<T>;
   T local_nan = _nan<T>;
 
-  const T* local_ptr_cos_table = &constants_trig<T>::cos_table[0][0];
-  const T* local_ptr_sin_table = &constants_trig<T>::sin_table[0][0];
+  const T* local_ptr_cos_table = &constants_trig_tables<T>::cos_table[0][0];
+  const T* local_ptr_sin_table = &constants_trig_tables<T>::sin_table[0][0];
 
   if (input.eval() == zeropointzero) {
     return two<T>{zeropointzero, zeropointzero};
