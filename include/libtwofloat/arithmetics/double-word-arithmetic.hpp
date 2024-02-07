@@ -329,18 +329,14 @@ inline T two_sum(T a, T b, T &err) {
   return s;
 }
 
-namespace dd_real {
-
-  // Reference: QD / dd_inline.h
-  // TODO: make sure this has not been already implemented
-  template <typename T>
-  inline two<T> add(T a, T b) {
-    T s, e;
-    s = two_sum(a, b, e);
-    return two<T> (s, e);
-  }
-
-} // End namespace dd_real
+// Reference: QD / dd_inline.h (within dd_real namespace)
+// TODO: make sure this has not been already implemented
+template <typename T>
+inline two<T> add(T a, T b) {
+  T s, e;
+  s = two_sum(a, b, e);
+  return two<T> (s, e);
+}
 
 // Reference: QD / inline.h (within qd namespace)
 /* Computes the nearest integer to input. */
@@ -518,7 +514,7 @@ two<T> sqrt(const two<T> &input) {
   T x = onepointzero<T> / std::sqrt(input.h);
   T ax = input.h * x;
   two<T> temp = sub<doubleword::Mode::Accurate>(input, sqr(ax));
-  return dd_real::add(ax, temp.h * x * pointfive<T>);
+  return add(ax, temp.h * x * pointfive<T>);
 }
 
 // Reference: QD / dd_real.cpp
