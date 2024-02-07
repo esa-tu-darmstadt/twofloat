@@ -303,20 +303,6 @@ struct constants_trig_tables {
   };
 };
 
-// Notice the definition of the qd namespace
-namespace qd {
-  // Reference QD / inline.h
-  // TODO: make sure this has not been already implemented
-  template <typename T>
-  inline T two_sum(T a, T b, T &err) {
-    T s = a + b;
-    T bb = s - a;
-    err = (a - (s - bb)) - (b - bb);
-    return s;
-  }
-
-} // End namespace qd
-
 // Reference: QD / inline.h
 /* Computes fl(input * input) and err(input * input) */
 template <typename T>
@@ -331,6 +317,16 @@ inline T two_sqr(T input, T &err) {
   lo = temp.l;
   err = ((hi * hi - q) + twopointzero<T> * hi * lo) + lo * lo;
   return q;
+}
+
+// Reference QD / inline.h
+// TODO: make sure this has not been already implemented
+template <typename T>
+inline T two_sum(T a, T b, T &err) {
+  T s = a + b;
+  T bb = s - a;
+  err = (a - (s - bb)) - (b - bb);
+  return s;
 }
 
 namespace dd_real {
@@ -348,7 +344,7 @@ namespace dd_real {
   template <typename T>
   inline two<T> add(T a, T b) {
     T s, e;
-    s = qd::two_sum(a, b, e);
+    s = two_sum(a, b, e);
     return two<T> (s, e);
   }
 
