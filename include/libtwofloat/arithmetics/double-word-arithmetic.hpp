@@ -234,7 +234,8 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
     static_assert(sizeof(T) == 0, "Unsupported mode");
 }
 
-// Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
+/// \brief QD constants
+/// Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
 template <typename T>
 static const two<T> _2pi = {6.283185307179586232e+00, 2.449293598294706414e-16};
 
@@ -250,7 +251,9 @@ static const constexpr T _nan = std::numeric_limits<T>::quiet_NaN();
 template <typename T>
 static const constexpr T _eps = 4.93038065763132e-32;  // 2^-104
 
-// Some recurrently-used contants
+static const int n_inv_fact = 15;
+
+/// \brief Some recurrently-used contants
 template <typename T>
 static const constexpr T pointfive = 0.5;
 
@@ -263,9 +266,7 @@ static const constexpr T zeropointzero = 0.0;
 template <typename T>
 static const constexpr T onepointzero = 1.0;
 
-// Reference: QD / dd_real.cpp
-static const int n_inv_fact = 15;
-
+/// \brief Tables containing constant data for trigonometric functions
 template <typename T>
 struct constants_trig_tables {
 
@@ -288,7 +289,7 @@ struct constants_trig_tables {
   };
 
   // Reference: QD / dd_real.cpp
-  /* Table of sin(k * pi/16) and cos(k * pi/16). */
+  // Table of sin(k * pi/16) and cos(k * pi/16).
   static const constexpr T cos_table [4][2] = {
     {9.807852804032304306e-01, 1.854693999782500573e-17},
     {9.238795325112867385e-01, 1.764504708433667706e-17},
@@ -303,8 +304,8 @@ struct constants_trig_tables {
   };
 };
 
-// Reference: QD / inline.h (within qd namespace)
-/* Computes fl(input * input) and err(input * input) */
+/// \brief Computes fl(input * input) and err(input * input)
+/// Reference: QD / inline.h (within qd namespace)
 template <typename T>
 inline T two_sqr(T input, T &err) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
@@ -317,8 +318,8 @@ inline T two_sqr(T input, T &err) {
   return q;
 }
 
-// Reference QD / inline.h (within qd namespace)
-// TODO: make sure this has not been already implemented in twofloat
+/// Reference QD / inline.h (within qd namespace)
+/// TODO: make sure this has not been already implemented in twofloat
 template <typename T>
 inline T two_sum(T a, T b, T &err) {
   T s = a + b;
@@ -327,8 +328,8 @@ inline T two_sum(T a, T b, T &err) {
   return s;
 }
 
-// Reference: QD / dd_inline.h (within dd_real namespace)
-// TODO: make sure this has not been already implemented in twofloat
+/// Reference: QD / dd_inline.h (within dd_real namespace)
+/// TODO: make sure this has not been already implemented in twofloat
 template <typename T>
 inline two<T> add(T a, T b) {
   T s, e;
@@ -336,8 +337,8 @@ inline two<T> add(T a, T b) {
   return two<T> (s, e);
 }
 
-// Reference: QD / inline.h (within qd namespace)
-/* Computes the nearest integer to input. */
+/// \brief Computes the nearest integer to input.
+/// Reference: QD / inline.h (within qd namespace)
 template <typename T>
 inline T nint(T input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
@@ -347,29 +348,28 @@ inline T nint(T input) {
   return std::floor(input + pointfive<T>);
 }
 
-// Reference: QD / dd_inline.h
-/* Round to nearest integer */
+/// \brief Round to nearest integer.
+/// Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> nint(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
   T hi = nint(input.h);
   T lo;
   if(hi == input.h) {
-    /* High word is an integer already. Round the low word. */
+    // High word is an integer already. Round the low word
     lo = nint(input.l);
 
-    /* Renormalize. This is needed if h = some integer, l = 1/2. */
+    // Renormalize. This is needed if h = some integer, l = 1/2
     //hi = qd::quick_two_sum(hi, lo, lo);
     two<T> temp = twofloat::algorithms::FastTwoSum(hi, lo);
     hi = temp.h;
     lo = temp.l;
   }
   else {
-    /* High word is not an integer */
+    // High word is not an integer
     lo = zeropointzero<T>;
     if(std::abs(hi - input.h) == pointfive<T> && input.l < zeropointzero<T>) {
-      /* There is a tie in the high word, consult the low word
-         to break the tie. */
+      // There is a tie in the high word, consult the low word to break the tie
       hi -= onepointzero<T>; /* NOTE: This does not cause INEXACT. */
     }
   }
@@ -377,7 +377,7 @@ inline two<T> nint(const two<T> &input) {
   return two<T>{hi, lo};
 }
 
-// Reference: QD / dd_inline.h (within dd_real namespace)
+/// Reference: QD / dd_inline.h (within dd_real namespace)
 template <typename T>
 inline two<T> sqr(T input) {
   T p1, p2;
@@ -385,7 +385,7 @@ inline two<T> sqr(T input) {
   return two<T>{p1, p2};
 }
 
-// Reference: QD / dd_inline.h
+/// Reference: QD / dd_inline.h
 template <typename T>
 inline two<T> sqr(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
@@ -400,9 +400,9 @@ inline two<T> sqr(const two<T> &input) {
   return two<T>{s1, s2};
 }
 
-// Reference: QD / dd_real.cpp
-/* Computes sin(a) using Taylor series.
-   Assumes |a| <= pi/32 */
+/// \brief Computes sin(a) using Taylor series.
+/// Assumes |a| <= pi/32
+/// Reference: QD / dd_real.cpp
 template <Mode p, bool useFMA, typename T>
 static two<T> sin_taylor(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
@@ -432,14 +432,14 @@ static two<T> sin_taylor(const two<T> &input) {
   return s;
 }
 
-// Reference: QD / dd_inline.h
-/* double-double * double, where double is a power of 2. */
+/// \brief double-double * double, where double is a power of 2.
+/// Reference: QD / dd_inline.h
 template<typename T>
 inline two<T> mul_pwr2(const two<T> &input, T b) {
   return two<T>(input.h * b, input.l * b);
 }
 
-// Reference: QD / dd_real.cpp
+/// Reference: QD / dd_real.cpp
 template <Mode p, bool useFMA, typename T>
 static two<T> cos_taylor(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
@@ -468,21 +468,21 @@ static two<T> cos_taylor(const two<T> &input) {
   return s;
 }
 
-// Reference: QD / dd_real.cpp
-/* Computes the square root of the double-double number dd.
-   NOTE: dd must be a non-negative number. */
+/// \brief Computes the square root of the double-double number dd.
+/// NOTE: dd must be a non-negative number.
+///
+/// Strategy:  Use Karp's trick:  if x is an approximation
+///     to sqrt(a), then
+///
+///        sqrt(a) = a*x + [a - (a*x)^2] * x / 2   (approx)
+///
+///     The approximation is accurate to twice the accuracy of x.
+///     Also, the multiplication (a*x) and [-]*x can be done with
+///     only half the precision.
+///
+/// Reference: QD / dd_real.cpp
 template <Mode p, typename T>
 two<T> sqrt(const two<T> &input) {
-  /* Strategy:  Use Karp's trick:  if x is an approximation
-     to sqrt(a), then
-
-        sqrt(a) = a*x + [a - (a*x)^2] * x / 2   (approx)
-
-     The approximation is accurate to twice the accuracy of x.
-     Also, the multiplication (a*x) and [-]*x can be done with
-     only half the precision.
-  */
-
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
   T local_nan = _nan<T>;
 
@@ -502,12 +502,11 @@ two<T> sqrt(const two<T> &input) {
   return add(ax, temp.h * x * pointfive<T>);
 }
 
-// Reference: QD / dd_real.cpp
+/// Reference: QD / dd_real.cpp
 template <Mode p, bool useFMA, typename T>
 static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
-  // Reference: QD / dd_inline.h
   if (input.eval() == zeropointzero<T>) {
     sin_a.h = zeropointzero<T>;
     sin_a.l = zeropointzero<T>;
@@ -520,7 +519,7 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
   cos_a = sqrt<p>(sub(onepointzero<T>, sqr(sin_a)));
 }
 
-// Reference: QD / dd_real.cpp
+/// Reference: QD / dd_real.cpp
 template <Mode p, bool useFMA, typename T>
 inline two<T> sin(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
