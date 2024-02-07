@@ -332,14 +332,6 @@ inline T two_sum(T a, T b, T &err) {
 namespace dd_real {
 
   // Reference: QD / dd_inline.h
-  template <typename T>
-  inline two<T> sqr(T input) {
-    T p1, p2;
-    p1 = two_sqr(input, p2);
-    return two<T>{p1, p2};
-  }
-
-  // Reference: QD / dd_inline.h
   // TODO: make sure this has not been already implemented
   template <typename T>
   inline two<T> add(T a, T b) {
@@ -391,6 +383,14 @@ inline two<T> nint(const two<T> &input) {
   }
 
   return two<T>{hi, lo};
+}
+
+// Reference: QD / dd_inline.h (within dd_real namespace)
+template <typename T>
+inline two<T> sqr(T input) {
+  T p1, p2;
+  p1 = two_sqr(input, p2);
+  return two<T>{p1, p2};
 }
 
 // Reference: QD / dd_inline.h
@@ -517,7 +517,7 @@ two<T> sqrt(const two<T> &input) {
 
   T x = onepointzero<T> / std::sqrt(input.h);
   T ax = input.h * x;
-  two<T> temp = sub<doubleword::Mode::Accurate>(input, dd_real::sqr(ax));
+  two<T> temp = sub<doubleword::Mode::Accurate>(input, sqr(ax));
   return dd_real::add(ax, temp.h * x * pointfive<T>);
 }
 
