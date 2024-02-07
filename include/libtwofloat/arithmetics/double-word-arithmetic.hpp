@@ -237,7 +237,6 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 // Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
 // TODO: transform this to FP32 (the original code is FP64)
 // TODO: check ranges (i.e., exponents)
-static const float fp32_nan = std::numeric_limits<float>::quiet_NaN();
 const float fp32_eps = 4.9303806e-32;  // 2^-104
 const float fp32_qd_splitter = 134217729.0f; // = 2^27 + 1
 const float fp32_qd_split_thresh = 6.6969287e+299; // = 2^996 // TODO: check! range is beyond float
@@ -247,7 +246,7 @@ const float fp32_split_factor_2 = 268435456.0f; // 2^28
 
 
 
-static const double fp64_nan = std::numeric_limits<double>::quiet_NaN();
+
 const double fp64_eps = 4.93038065763132e-32;  // 2^-104
 const double fp64_qd_splitter = 134217729.0; // = 2^27 + 1
 const double fp64_qd_split_thresh = 6.69692879491417e+299; // = 2^996 // TODO: check! range is beyond double
@@ -262,6 +261,9 @@ static const two<T> _pi2  = {1.570796326794896558e+00, 6.123233995736766036e-17}
 
 template <typename T>
 static const two<T> _pi16 = {1.963495408493620697e-01, 7.654042494670957545e-18};
+
+template <typename T>
+static const constexpr T _nan = std::numeric_limits<T>::quiet_NaN();
 
 // Reference: QD / dd_real.cpp
 static const int n_inv_fact = 15;
@@ -571,20 +573,20 @@ two<T> sqrt(const two<T> &input) {
      only half the precision.
   */
 
-  T zeropointzero, onepointzero, pointfive, local_nan;
+  T zeropointzero, onepointzero, pointfive;
   if constexpr (std::is_same_v<T, float>) {
     onepointzero = 1.0f;
     zeropointzero = 0.0f;
     pointfive = 0.5f;
-    local_nan = fp32_nan;
   } else if constexpr (std::is_same_v<T, double>) {
     onepointzero = 1.0;
     zeropointzero = 0.0;
     pointfive = 0.5;
-    local_nan = fp64_nan;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
+
+  T local_nan = _nan<T>;
 
   if (input.eval() == zeropointzero) {
     return two<T>{zeropointzero, zeropointzero};
@@ -636,16 +638,14 @@ template <typename T>
 inline two<T> sin(const two<T> &input) {
   const T* local_ptr_cos_table;
   const T* local_ptr_sin_table;
-  T zeropointzero, pointfive, local_nan;
+  T zeropointzero, pointfive;
 
   if constexpr (std::is_same_v<T, float>) {
     zeropointzero = 0.0f;
     pointfive  = 0.5f;
-    local_nan  = fp32_nan;
   } else if constexpr (std::is_same_v<T, double>) {
     zeropointzero = 0.0;
     pointfive  = 0.5;
-    local_nan  = fp64_nan;
   } else {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
@@ -653,6 +653,7 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_2pi = _2pi<T>;
   two<T> local_pi2 = _pi2<T>;
   two<T> local_pi16 = _pi16<T>;
+  T local_nan = _nan<T>;
 
   local_ptr_cos_table = &constants_trig<T>::cos_table[0][0];
   local_ptr_sin_table = &constants_trig<T>::sin_table[0][0];
