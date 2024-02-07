@@ -444,9 +444,7 @@ inline two<T> sqr(const two<T> &input) {
 template<typename T>
 static two<T> sin_taylor(const two<T> &input) {
 
-  T pointfive;
-  const T* local_ptr_inv_fact;
-  T zeropointzero;
+  T pointfive, zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
     zeropointzero = 0.0f;
@@ -457,8 +455,7 @@ static two<T> sin_taylor(const two<T> &input) {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
-  local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
-
+  const T* local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
 
   //const T thresh = pointfive * std::abs(to_double(input)) * local_eps;
@@ -498,9 +495,7 @@ inline two<T> mul_pwr2(const two<T> &input, T b) {
 template<typename T>
 static two<T> cos_taylor(const two<T> &input) {
 
-  T pointfive, onepointzero;
-  const T* local_ptr_inv_fact;
-  T zeropointzero;
+  T pointfive, onepointzero, zeropointzero;
   if constexpr (std::is_same_v<T, float>) {
     pointfive = 0.5f;
     onepointzero = 1.0f;
@@ -513,8 +508,7 @@ static two<T> cos_taylor(const two<T> &input) {
     static_assert(sizeof(T) == 0, "Other types not supported");
   }
 
-  local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
-
+  const T* local_ptr_inv_fact = &constants_trig<T>::inv_fact[0][0];
   T local_eps = _eps<T>;
 
   const T thresh = pointfive * local_eps;
@@ -619,10 +613,8 @@ static void sincos_taylor(const two<T> &input, two<T> &sin_a, two<T> &cos_a) {
 // Reference: QD / dd_real.cpp
 template <typename T>
 inline two<T> sin(const two<T> &input) {
-  const T* local_ptr_cos_table;
-  const T* local_ptr_sin_table;
-  T zeropointzero, pointfive;
 
+  T zeropointzero, pointfive;
   if constexpr (std::is_same_v<T, float>) {
     zeropointzero = 0.0f;
     pointfive  = 0.5f;
@@ -638,8 +630,8 @@ inline two<T> sin(const two<T> &input) {
   two<T> local_pi16 = _pi16<T>;
   T local_nan = _nan<T>;
 
-  local_ptr_cos_table = &constants_trig<T>::cos_table[0][0];
-  local_ptr_sin_table = &constants_trig<T>::sin_table[0][0];
+  const T* local_ptr_cos_table = &constants_trig<T>::cos_table[0][0];
+  const T* local_ptr_sin_table = &constants_trig<T>::sin_table[0][0];
 
   if (input.eval() == zeropointzero) {
     return two<T>{zeropointzero, zeropointzero};
