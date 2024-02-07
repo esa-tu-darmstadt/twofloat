@@ -427,7 +427,6 @@ static two<T> sin_taylor(const two<T> &input) {
     t = mul<p, useFMA>(r, two<T>{(local_ptr_inv_fact+i)[0], (local_ptr_inv_fact+i)[1]});
     s = add<p>(s, t);
     i += 2;
-  //} while (i < n_inv_fact && std::abs(to_double(t)) > thresh);
   } while (i < n_inv_fact && std::abs(t.eval()) > thresh);
 
   return s;
