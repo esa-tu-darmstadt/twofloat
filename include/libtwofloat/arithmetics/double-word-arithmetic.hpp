@@ -355,12 +355,12 @@ template <typename T>
 inline two<T> nint(const two<T> &input) {
   static_assert((std::is_same_v<T, float> || std::is_same_v<T, double>), "Other types not supported");
 
-  T hi = /*qd::*/nint(input.h);
+  T hi = nint(input.h);
   T lo;
 
   if(hi == input.h) {
     /* High word is an integer already. Round the low word. */
-    lo = /*qd::*/nint(input.l);
+    lo = nint(input.l);
 
     /* Renormalize. This is needed if h = some integer, l = 1/2. */
     //hi = qd::quick_two_sum(hi, lo, lo);
