@@ -235,18 +235,6 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 }
 
 // Reference: QD / dd_const.cpp / inline.h / dd_real.cpp
-// TODO: transform this to FP32 (the original code is FP64)
-// TODO: check ranges (i.e., exponents)
-const float fp32_qd_splitter = 134217729.0f; // = 2^27 + 1
-const float fp32_qd_split_thresh = 6.6969287e+299; // = 2^996 // TODO: check! range is beyond float
-const float fp32_split_factor = 3.7252902e-09; // 2^-28
-const float fp32_split_factor_2 = 268435456.0f; // 2^28
-
-const double fp64_qd_splitter = 134217729.0; // = 2^27 + 1
-const double fp64_qd_split_thresh = 6.69692879491417e+299; // = 2^996 // TODO: check! range is beyond double
-const double fp64_split_factor = 3.7252902984619140625e-09; // 2^-28
-const double fp64_split_factor_2 = 268435456.0; // 2^28
-
 template <typename T>
 static const two<T> _2pi = {6.283185307179586232e+00, 2.449293598294706414e-16};
 
@@ -267,8 +255,6 @@ static const int n_inv_fact = 15;
 
 template <typename T>
 struct constants_trig {
-
-
 
   static const constexpr T inv_fact[n_inv_fact][2] = {
     { 1.66666666666666657e-01,  9.25185853854297066e-18},
