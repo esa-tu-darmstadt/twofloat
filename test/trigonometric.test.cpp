@@ -16,7 +16,7 @@ namespace doubleword {
 namespace test {
 
 template <doubleword::Mode mode, bool useFMA>
-void sinTest() {
+void sinTest(double dx) {
   // Print SinCoefficients
   // TODO: Remove this debug ouput.
   for (int i = 0; i < details::SinCoefficients<float>.size(); i++) {
@@ -26,8 +26,7 @@ void sinTest() {
               << details::SinCoefficients<float>[i].l << std::endl;
   }
 
-  double dx = 0.05;
-  two<float> x = two<float>(dx, 0);
+  two<float> x = algorithms::Split<float, double>(dx);
   two<float> res = sin<float, doubleword::mul<mode, useFMA>,
                        doubleword::mul<mode, useFMA>, doubleword::add<mode>,
                        doubleword::sub<mode>, doubleword::div<mode, useFMA>>(x);
@@ -38,7 +37,9 @@ void sinTest() {
 }
 
 TEST(TrigonometricTest, SinAccurateFMA) {
-  sinTest<doubleword::Mode::Accurate, true>();
+  for (double dx = -0.05; dx <= 0.05; dx += 0.01) {
+    sinTest<doubleword::Mode::Accurate, true>(dx);
+  }
 }
 
 }  // namespace test
