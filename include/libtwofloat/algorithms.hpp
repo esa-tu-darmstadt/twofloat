@@ -79,26 +79,26 @@ inline two<T> TwoDiff(T a, T b) {
 
 /// \brief Splits a floating point number into the sum of a large and a small
 /// floating point number (Veltkamp 1968). Taken from Boldo 2006.
-template <typename T>
-inline two<T> Split(T x) {
-  if (abs(x) > constants<T>::SplitScaleThreshold) [[unlikely]] {
+template <typename ResT, typename InT = ResT>
+inline constexpr two<ResT> Split(InT x) {
+  if (abs(x) > constants<ResT>::SplitScaleThreshold) [[unlikely]] {
     // Scale down the number to avoid overflows
-    x *= constants<T>::SplitScaleDownFactor;
+    x *= constants<ResT>::SplitScaleDownFactor;
 
-    T p = x * constants<T>::SplitC;
-    T q = x - p;
-    T x1 = p + q;
-    T x2 = x - x1;
+    InT p = x * constants<ResT>::SplitC;
+    InT q = x - p;
+    ResT x1 = p + q;
+    ResT x2 = x - x1;
 
     // Scale the numbers back up
-    return {x1 * constants<T>::SplitScaleUpFactor,
-            x2 * constants<T>::SplitScaleUpFactor};
+    return {x1 * constants<ResT>::SplitScaleUpFactor,
+            x2 * constants<ResT>::SplitScaleUpFactor};
   } else {
     // It is safe to split the number without scaling
-    T p = x * constants<T>::SplitC;
-    T q = x - p;
-    T x1 = p + q;
-    T x2 = x - x1;
+    InT p = x * constants<ResT>::SplitC;
+    InT q = x - p;
+    ResT x1 = p + q;
+    ResT x2 = x - x1;
     return {x1, x2};
   }
 }
@@ -147,8 +147,8 @@ inline two<T> TwoProd(T a, T b) {
   two<T> res;
   res.h = a * b;
 
-  two<T> a1 = Split(a);
-  two<T> b1 = Split(b);
+  two<T> a1 = Split<T>(a);
+  two<T> b1 = Split<T>(b);
 
   res.l = ((a1.h * b1.h - res.h) + a1.h * b1.l + a1.l * b1.h) + a1.l * b1.l;
   return res;

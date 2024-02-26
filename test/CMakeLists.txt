@@ -7,7 +7,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(twofloat_test pair-arithmetic.test.cpp double-word-arithmetic.test.cpp)
+add_executable(twofloat_test pair-arithmetic.test.cpp double-word-arithmetic.test.cpp trigonometric.test.cpp)
 target_link_libraries(twofloat_test twofloat GTest::gtest_main)
 
 include(GoogleTest)

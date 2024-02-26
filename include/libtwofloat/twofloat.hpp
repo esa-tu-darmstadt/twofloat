@@ -32,7 +32,7 @@ struct two {
   two() : h(0), l(0) {}
 
   /// \brief Constructs an instance from a single floating point number.
-  explicit two(T h) : h(h), l(0) {}
+  explicit two(T value) : h(h), l(0) {}
 
   /// \brief Constructs an instance from two floating point numbers.
   two(T h, T l) : h(h), l(l) {}
@@ -43,6 +43,9 @@ struct two {
   U eval() const {
     return static_cast<U>(h) + static_cast<U>(l);
   }
+
+  /// \brief Negation operator
+  two<T> operator-() const { return {-h, -l}; }
 };
 
 }  // namespace twofloat
