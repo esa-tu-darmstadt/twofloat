@@ -13,7 +13,7 @@ namespace twofloat {
 template <typename T>
 using ArithFunctionDWDW = two<T> (*)(const two<T>&, const two<T>&);
 template <typename T>
-using ArithFunctionDWF = two<T> (*)(const two<T>&, const two<T>&);
+using ArithFunctionDWF = two<T> (*)(const two<T>&, T);
 
 namespace details {
 template <typename T>
@@ -74,22 +74,23 @@ two<T> sin_taylor(const two<T>& input) {
 }
 }  // namespace details
 
-template <typename T, ArithFunctionDWDW<T> mul, ArithFunctionDWDW<T> add,
-          ArithFunctionDWDW<T> sub, ArithFunctionDWDW<T> div>
+template <typename T, ArithFunctionDWDW<T> mulDWDW, ArithFunctionDWF<T> mulDWF,
+          ArithFunctionDWDW<T> addDWDW, ArithFunctionDWDW<T> subDWDW,
+          ArithFunctionDWDW<T> divDWDW>
 two<T> sin(const two<T>& a) {
   if (a.eval() == 0) return {0, 0};
 
   // approximately reduce modulo 2*pi
-  two<T> z = nint(div(a, details::m_2_pi<T>));
-  two<T> r = sub(a, mul(details::m_2_pi<T>, z));
+  two<T> z = nint(divDWDW(a, details::m_2_pi<T>));
+  two<T> r = subDWDW(a, mulDWDW(details::m_2_pi<T>, z));
 
   // approximately reduce modulo pi/2 and then modulo pi/16.
   // t = a % (pi/16)
   T q = floor(r.h / details::m_pi_2<T>.h + 0.5);
-  two<T> t = sub(r, mul(details::m_pi_2<T>, q));
+  two<T> t = subDWDW(r, mulDWF(details::m_pi_2<T>, q));
   int j = (int)q;
   q = floor(r.h / details::m_pi_16<T>.h + 0.5);
-  t = sub(t, mul(details::m_pi_16<T>, q));
+  t = subDWDW(t, mulDWF(details::m_pi_16<T>, q));
   int k = (int)q;
   int abs_k = abs(k);
 
@@ -107,13 +108,13 @@ two<T> sin(const two<T>& a) {
   if (k == 0) {
     switch (j) {
       case 0:
-        return details::sin_taylor<t, mul, add>(t);
+        return details::sin_taylor<T, mulDWDW, addDWDW>(t);
       // case 1:
       //   return details::cos_taylor<t, mul, add>(t);
       // case -1:
       //   return details::cos_taylor(t);
       default:
-        return details::sin_taylor(t);
+        return -details::sin_taylor<T, mulDWDW, addDWDW>(t);
     }
   }
 
@@ -126,19 +127,19 @@ two<T> sin(const two<T>& a) {
   // auto [sin_t, cos_t] = details::sincos_taylor(t);
   // if (j == 0) {
   //   if (k > 0)
-  //     return add(mul(u, sin_t), mul(v, cos_t));
+  //     return add(mulDWDW(u, sin_t), mulDWDW(v, cos_t));
   //   else
-  //     return sub(mul(u, sin_t), mul(v, cos_t));
+  //     return sub(mulDWDW(u, sin_t), mulDWDW(v, cos_t));
   // } else if (j == 1) {
   //   if (k > 0)
-  //     return sub(mul(u, cos_t), mul(v, sin_t));
+  //     return sub(mulDWDW(u, cos_t), mulDWDW(v, sin_t));
   //   else
-  //     return add(mul(u, cos_t), mul(v, sin_t));
+  //     return add(mulDWDW(u, cos_t), mulDWDW(v, sin_t));
   // } else {
   //   if (k > 0)
-  //     return sub(-mul(u, sin_t), mul(v, cos_t));
+  //     return sub(-mulDWDW(u, sin_t), mulDWDW(v, cos_t));
   //   else
-  //     return sub(mul(v, cos_t), mul(u, sin_t));
+  //     return sub(mulDWDW(v, cos_t), mulDWDW(u, sin_t));
   // }
 }
 

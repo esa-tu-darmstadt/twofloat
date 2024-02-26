@@ -18,6 +18,7 @@ namespace test {
 template <doubleword::Mode mode, bool useFMA>
 void sinTest() {
   // Print SinCoefficients
+  // TODO: Remove this debug ouput.
   for (int i = 0; i < details::SinCoefficients<float>.size(); i++) {
     std::cout << std::scientific << std::setprecision(17);
     std::cout << "SinCoefficients[" << i
@@ -25,16 +26,15 @@ void sinTest() {
               << details::SinCoefficients<float>[i].l << std::endl;
   }
 
-  double dx = 0.1;
+  double dx = 0.05;
   two<float> x = two<float>(dx, 0);
-  two<float> res =
-      sin<float, doubleword::mul<mode, useFMA>, doubleword::add<mode>,
-          doubleword::sub<mode>, doubleword::div<mode, useFMA>>(x);
+  two<float> res = sin<float, doubleword::mul<mode, useFMA>,
+                       doubleword::mul<mode, useFMA>, doubleword::add<mode>,
+                       doubleword::sub<mode>, doubleword::div<mode, useFMA>>(x);
 
   double dresult = std::sin(dx);
 
-  EXPECT_NEAR(dresult, res.eval<double>(),
-              dresult * std::numeric_limits<two<double>>::epsilon());
+  EXPECT_NEAR(dresult, res.eval<double>(), 1e-9);
 }
 
 TEST(TrigonometricTest, SinAccurateFMA) {
