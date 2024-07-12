@@ -130,3 +130,6 @@ cmake --build build --target test
 | Split | 6 |
 | TwoProd w/o FMA | 9 + 2*Split = 21 |
 | TwoProd w/ FMA | 3 |
+
+## Errata
+`pair::sub` seems to be unprecise. Tested in the double precision matrix residual implementation.

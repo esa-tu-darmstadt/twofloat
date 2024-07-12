@@ -3,6 +3,7 @@
 /// \file twofloat.hpp
 /// \brief Implements the basic data structure used in all arithmetics.
 
+#include <initializer_list>
 #include <libtwofloat/constants.hpp>
 #include <limits>
 #include <type_traits>
@@ -29,10 +30,10 @@ struct two {
   T l;
 
   /// \brief Default constructor
-  two() : h(0), l(0) {}
+  two() : h(), l() {}
 
   /// \brief Constructs an instance from a single floating point number.
-  explicit two(T h) : h(h), l(0) {}
+  two(T h) : h(h), l(0) {}
 
   /// \brief Constructs an instance from two floating point numbers.
   two(T h, T l) : h(h), l(l) {}
@@ -43,6 +44,12 @@ struct two {
   U eval() const {
     return static_cast<U>(h) + static_cast<U>(l);
   }
+
+  /// \brief Explicitly convert to the underlying floating point type
+  explicit operator T() const { return eval(); }
+
+  /// \brief Implements the equality comparison operator
+  bool operator==(const two<T> &b) { return h == b.h && l == b.l; }
 };
 
 }  // namespace twofloat

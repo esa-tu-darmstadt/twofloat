@@ -37,7 +37,7 @@ struct constants {
   /// two floating point numbers.
   /// \details Calculated as β^(s) + 1. See Boldo 2006 Algorithm 1
   /// and 2 for explanations.
-  static const constexpr T SplitC = details::pow(2.0, SplitS) + 1;
+  static const constexpr T SplitC = details::pow(2.0, SplitS) + 1.0;  //- T{};
 
   /// \brief The threshold used to prevent overflows when splitting a floating
   /// point number into the sum of two numbers.
@@ -49,11 +49,12 @@ struct constants {
 
   /// \brief A factor used to scale down a floating point number before
   /// splitting it to avoid overflows.
-  static const constexpr T SplitScaleDownFactor = details::pow(0.5, SplitS + 1);
+  static const constexpr T SplitScaleDownFactor =
+      details::pow(0.5, SplitS + 1);  // - T{};
 
   /// \brief The factor used to scale back up a floating point number after
   /// splitting it.
-  static const constexpr T SplitScaleUpFactor = 1.0 / SplitScaleDownFactor;
+  static const constexpr T SplitScaleUpFactor = 1 / SplitScaleDownFactor;
 };
 }  // namespace algorithms
 }  // namespace twofloat
