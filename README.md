@@ -1,4 +1,4 @@
-# twofloat
+# TwoFloat Library
 
 Double-word arithmetic is a technique used to represent a real number as an unevaluated sum of two floating-point numbers, commonly referred to as "double-double" arithmetic. This representation allows to represent numbers with twice the precision of the underlying floating-point type. 
 
