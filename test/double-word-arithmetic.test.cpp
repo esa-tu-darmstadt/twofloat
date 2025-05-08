@@ -255,6 +255,30 @@ TEST(DoubleWordArithmetic, DivFPTest) { divFPTest<false>(); }
 
 TEST(DoubleWordArithmetic, DivFPFMATest) { divFPTest<true>(); }
 
+TEST(DoubleWordArithmetic, SinTest) {
+  float x = 1;
+  float sinx = std::sin(x);
+
+  two<float> two_x = {x, 0.0f};
+  two<float> sin_two_x = doubleword::sin<doubleword::Mode::Accurate, true>(two_x);
+
+  // Check the expected and actual values within /build/Testing/Temporary/LastTest.log
+  EXPECT_FLOAT_EQ(sinx, sin_two_x.eval<float>());
+  //EXPECT_NEAR(sinx, sin_two_x.eval<float>(), sinx * std::numeric_limits<two<float>>::epsilon());
+}
+
+TEST(DoubleWordArithmetic, SinTest2) {
+  double x = 1;
+  double sinx = std::sin(x);
+
+  two<double> two_x = {x, 0.0};
+  two<double> sin_two_x = doubleword::sin<doubleword::Mode::Accurate, true>(two_x);
+
+  // Check the expected and actual values within /build/Testing/Temporary/LastTest.log
+  EXPECT_DOUBLE_EQ(sinx, sin_two_x.eval<double>());
+  //EXPECT_NEAR(sinx, sin_two_x.eval<double>(), sinx * std::numeric_limits<two<double>>::epsilon());
+}
+
 }  // namespace test
 }  // namespace doubleword
 }  // namespace twofloat
