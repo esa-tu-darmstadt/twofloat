@@ -6,6 +6,9 @@ This C++-library implements two recently proposed double-word arithmetics.
 - `twofloat::doubleword`: Double-word arithmetic  proposed by Joldes et al. 2017 ([Tight and rigorous error bounds for basic building blocks of double-word arithmetic](https://doi.org/10.1145/3121432))
 - `twofloat::pair`: Pair arithmetic proposed by Lange and Rump in 2020 ([Faithfully Rounded Floating-point Computations](https://doi.org/10.1145/3290955)). This arithmetic skips the normalization step after each operation, which makes it faster than the double-word arithmetic. However, faithful rounding is only guaranteed up to a certain number of operations on the same number.
 
+## Citation
+If you use this software, please cite the following publication for which it was developed:
+> Noack, T., Krüger, L., and Koch, A. (2025). Accelerating Sparse Linear Solvers on Intelligence Processing Units. In Proceedings of the 2025 IEEE International Parallel and Distributed Processing Symposium (IPDPS). doi: 10.1109/IPDPS64566.2025.00095
 
 ## FMA support
 Some operations that involve multiplications or divisions can benefit from fused multiply-add (FMA) instructions. **If this instruction is available on the target architecture, the FMA version of an operation should be preferred for better performance and accuracy.** If FMA instructions are unavailable, FMA implementations should not be used because emulating FMA instructions is considerably slower than using non-FMA implementations. 
