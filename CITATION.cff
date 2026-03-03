@@ -1,10 +1,10 @@
-@inproceedings{noack2025ipdps,
-  author = {Noack, Tim and Krüger, Louis and Koch, Andreas},
-  title = {Accelerating Sparse Linear Solvers on Intelligence Processing Units},
-  year = {2025},
-  isbn = {9798331532376},
-  booktitle={Proceedings of the 2025 IEEE International Parallel and Distributed Processing Symposium (IPDPS)},
-  doi={10.1109/IPDPS64566.2025.00095},
-  shorthands={tn,ahk},
-  preprint = {https://www.esa.informatik.tu-darmstadt.de/assets/publications/materials/2025/2025_IPDPS_TN.pdf},
-}
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Noack"
+  given-names: "Tim"
+  orcid: "https://orcid.org/0009-0008-0489-7149"
+title: "twofloat"
+version: 0.2.0
+date-released: 2025-04-30
+url: "https://github.com/esa-tu-darmstadt/twofloat"
