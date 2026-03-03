@@ -1,0 +1,10 @@
+@inproceedings{noack2025ipdps,
+  author = {Noack, Tim and Krüger, Louis and Koch, Andreas},
+  title = {Accelerating Sparse Linear Solvers on Intelligence Processing Units},
+  year = {2025},
+  isbn = {9798331532376},
+  booktitle={Proceedings of the 2025 IEEE International Parallel and Distributed Processing Symposium (IPDPS)},
+  doi={10.1109/IPDPS64566.2025.00095},
+  shorthands={tn,ahk},
+  preprint = {https://www.esa.informatik.tu-darmstadt.de/assets/publications/materials/2025/2025_IPDPS_TN.pdf},
+}
