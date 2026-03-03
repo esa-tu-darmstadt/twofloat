@@ -6,12 +6,10 @@ authors:
   - family-names: Noack
     given-names: Tim
     orcid: "https://orcid.org/0009-0008-0489-7149"
-  - family-names: Krüger
+  - family-names: "Krüger"
     given-names: Louis
-    orcid: "https://orcid.org/0009-0008-0489-7149"
   - family-names: Koch
     given-names: Andreas
-    orcid: "https://orcid.org/0009-0008-0489-7149"
 doi: "10.1109/IPDPS64566.2025.00095"
 date-released: "2025-06-01"
 year: 2025
