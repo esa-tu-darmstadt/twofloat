@@ -1,10 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this work, please cite it as below."
+title: "Accelerating Sparse Linear Solvers on Intelligence Processing Units"
+type: conference-paper
 authors:
-- family-names: "Noack"
-  given-names: "Tim"
-  orcid: "https://orcid.org/0009-0008-0489-7149"
-title: "twofloat"
-version: 0.2.0
-date-released: 2025-04-30
-url: "https://github.com/esa-tu-darmstadt/twofloat"
+  - family-names: Noack
+    given-names: Tim
+    orcid: "https://orcid.org/0009-0008-0489-7149"
+  - family-names: Krüger
+    given-names: Louis
+    orcid: "https://orcid.org/0009-0008-0489-7149"
+  - family-names: Koch
+    given-names: Andreas
+    orcid: "https://orcid.org/0009-0008-0489-7149"
+doi: "10.1109/IPDPS64566.2025.00095"
+date-released: "2025-06-01"
+year: 2025
+collection-title: "Proceedings of the 2025 IEEE International Parallel and Distributed Processing Symposium (IPDPS)"
+conference:
+  name: "2025 IEEE International Parallel and Distributed Processing Symposium (IPDPS)"
+publisher:
+  name: "IEEE"
