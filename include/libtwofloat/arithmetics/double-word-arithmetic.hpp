@@ -223,8 +223,9 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
   } else if constexpr (mode == Mode::Accurate) {
     // DWDivDW3 in Joldes et al. (2017)
     static_assert(useFMA, "Accurate mode requires FMA");
-    T th = 1 / y.h;
-    T rh = 1 - y.h * th;
+    T th = T{1} / y.h;
+    // This residual is exact in DWDivDW3 and therefore requires an FMA.
+    T rh = algorithms::fma(-y.h, th, T{1});
     T rl = -(y.l * th);
     two<T> e = algorithms::FastTwoSum(rh, rl);
     two<T> delta = mul<Mode::Accurate, true>(e, th);

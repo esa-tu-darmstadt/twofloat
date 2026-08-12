@@ -1,5 +1,6 @@
 #include <libtwofloat/arithmetics/double-word-arithmetic.hpp>
 #include <libtwofloat/limits.hpp>
+#include <cmath>
 #include <limits>
 #include <random>
 
@@ -249,6 +250,19 @@ TEST(DoubleWordArithmetic, DivDWFMAFastTest) {
 
 TEST(DoubleWordArithmetic, DivDWFMAAccurateTest) {
   divDWTest<doubleword::Mode::Accurate, true>();
+}
+
+TEST(DoubleWordArithmetic, DivDWFMAAccuratePreservesReciprocalResidual) {
+  two<float> x = {10.0f, 0.0f};
+  two<float> y = {std::nextafter(1.0f, 2.0f), 0.0f};
+  double expected = static_cast<double>(x.h) / static_cast<double>(y.h);
+
+  two<float> result =
+      doubleword::div<doubleword::Mode::Accurate, true>(x, y);
+
+  EXPECT_NE(0.0f, result.l);
+  EXPECT_NEAR(expected, result.eval<double>(),
+              expected * std::numeric_limits<two<float>>::epsilon());
 }
 
 TEST(DoubleWordArithmetic, DivFPTest) { divFPTest<false>(); }

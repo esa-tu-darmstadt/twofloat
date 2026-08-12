@@ -5,6 +5,8 @@
 
 #include <libtwofloat/twofloat.hpp>
 
+#include <cmath>
+
 namespace twofloat {
 
 /// \brief Provides commonly used algorithms of all algorithms.
@@ -107,16 +109,7 @@ inline two<T> Split(T x) {
 /// result.
 template <typename T>
 inline T fma(T a, T b, T c) {
-  return fmaf(a, b, c);
-  // if constexpr (std::is_same_v<T, float>)
-  //   return std::fmaf(a, b, c);
-  // else if constexpr (std::is_same_v<T, double>)
-  //   return std::fma(a, b, c);
-  // else if constexpr (std::is_same_v<T, long double>)
-  //   return std::fmal(a, b, c);
-  // else
-  //   static_assert(sizeof(T) == 0, "fma not (yet?) implemented for this
-  //   type");
+  return std::fma(a, b, c);
 }
 
 /// \brief The Fast2Prod algorithm (e.g. Kahan 1996)

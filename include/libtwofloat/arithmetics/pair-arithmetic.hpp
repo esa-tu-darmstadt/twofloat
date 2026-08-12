@@ -26,8 +26,8 @@ namespace pair {
 template <typename T>
 inline two<T> add(const two<T> &x, const two<T> &y) {
   two<T> s = algorithms::TwoSum(x.h, y.h);
-  float v = x.l + y.l;
-  float w = s.l + v;
+  T v = x.l + y.l;
+  T w = s.l + v;
   return {s.h, w};
 }
 
@@ -37,7 +37,7 @@ inline two<T> add(const two<T> &x, const two<T> &y) {
 template <typename T>
 inline two<T> add(const two<T> &x, T y) {
   two<T> s = algorithms::TwoSum(x.h, y);
-  float w = s.l + x.l;
+  T w = s.l + x.l;
   return {s.h, w};
 }
 template <typename T>
@@ -51,8 +51,8 @@ inline two<T> add(T x, const two<T> &y) {
 template <typename T>
 inline two<T> sub(const two<T> &x, const two<T> &y) {
   two<T> s = algorithms::TwoDiff(x.h, y.h);
-  float v = x.l - y.l;
-  float w = s.l + v;
+  T v = x.l - y.l;
+  T w = s.l + v;
   return {s.h, w};
 }
 
@@ -62,7 +62,7 @@ inline two<T> sub(const two<T> &x, const two<T> &y) {
 template <typename T>
 inline two<T> sub(const two<T> &x, T y) {
   two<T> s = algorithms::TwoDiff(x.h, y);
-  float w = s.l + x.l;
+  T w = s.l + x.l;
   return {s.h, w};
 }
 /// \brief Subtracts a pairwise floating point number with a normal floating
@@ -71,7 +71,7 @@ inline two<T> sub(const two<T> &x, T y) {
 template <typename T>
 inline two<T> sub(T x, const two<T> &y) {
   two<T> s = algorithms::TwoDiff(x, y.h);
-  float w = s.l + y.l;
+  T w = s.l - y.l;
   return {s.h, w};
 }
 
@@ -115,7 +115,8 @@ inline two<T> mul(T x, T y) {
 template <typename T>
 inline two<T> div(const two<T> &x, const two<T> &y) {
   T c = x.h / y.h;
-  T t = x.h - c * y.h;
+  // CPairDiv requires this quotient residual to be exact.
+  T t = algorithms::fma(-c, y.h, x.h);
   T p = t + x.l;
   T q = c * y.l;
   T r = p - q;
@@ -130,7 +131,8 @@ inline two<T> div(const two<T> &x, const two<T> &y) {
 template <typename T>
 inline two<T> div(const two<T> &x, T y) {
   T c = x.h / y;
-  T t = x.h - c * y;
+  // Derived from CPairDiv: preserve its exact quotient residual.
+  T t = algorithms::fma(-c, y, x.h);
   T p = t + x.l;
   T r = p;
   T s = y;
