@@ -30,8 +30,8 @@ struct constants {
 
   /// \brief The number of bits that x2 fits into when splitting x into x1+x2 in
   /// algorithms::Split.
-  /// \details Calculated as t/2. See Boldo 2006 Algorithm 1 and 2 for details.
-  static const constexpr int SplitS = t / 2;
+  /// \details Calculated as (t+1)/2. See Boldo 2006 Algorithm 1 and 2 for details.
+  static const constexpr int SplitS = (t + 1) / 2;
 
   /// \brief A constant used to split a floating point number into the sum of
   /// two floating point numbers.
